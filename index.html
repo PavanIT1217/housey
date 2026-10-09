@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#3b2414">
+  <title>Housey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Courier+Prime:wght@700&family=Roboto+Slab:wght@600;800&family=Caveat:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23c8975a' stroke='%236b3f1d' stroke-width='4'/><text x='32' y='43' font-size='30' text-anchor='middle' font-family='Georgia' font-weight='bold' fill='%235a2e0e'>H</text></svg>">
+</head>
+<body>
+  <!-- Ink filters give each dab a rough, hand-stamped edge -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="ink0"><feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="2" seed="1"/><feDisplacementMap in="SourceGraphic" scale="7"/></filter>
+    <filter id="ink1"><feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="8"/></filter>
+    <filter id="ink2"><feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="2" seed="13"/><feDisplacementMap in="SourceGraphic" scale="6"/></filter>
+    <filter id="ink3"><feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="2" seed="29"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
+  </svg>
+
+  <header class="topbar">
+    <h1 class="logo">Housey</h1>
+    <div class="top-actions">
+      <button class="icon-btn" id="pauseBtn" title="Pause / resume calling" aria-label="Pause">⏸</button>
+      <button class="icon-btn" id="soundBtn" title="Sound on / off" aria-label="Sound">🔊</button>
+      <button class="icon-btn" id="newBtn" title="New game" aria-label="New game">↻</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- The caller: a cloth bag of wooden coins -->
+    <section class="caller" aria-live="polite">
+      <button class="bag" id="bag" aria-label="Draw a number from the bag">
+        <svg viewBox="0 0 120 140" class="bag-svg">
+          <defs>
+            <radialGradient id="sackFill" cx="40%" cy="45%" r="70%">
+              <stop offset="0" stop-color="#c9a46c"/>
+              <stop offset=".65" stop-color="#9c7543"/>
+              <stop offset="1" stop-color="#5e4223"/>
+            </radialGradient>
+            <pattern id="weave" width="4" height="4" patternUnits="userSpaceOnUse">
+              <rect width="4" height="4" fill="none"/>
+              <path d="M0 2h4M2 0v4" stroke="#3d2a14" stroke-opacity=".18" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <path d="M38 30 C30 40 10 62 12 96 C14 126 38 136 60 136 C82 136 106 126 108 96 C110 62 90 40 82 30 Z" fill="url(#sackFill)"/>
+          <path d="M38 30 C30 40 10 62 12 96 C14 126 38 136 60 136 C82 136 106 126 108 96 C110 62 90 40 82 30 Z" fill="url(#weave)"/>
+          <path d="M36 32 Q60 40 84 32" stroke="#4a3219" stroke-width="2" fill="none" opacity=".5"/>
+          <path d="M44 46 Q40 80 34 118 M60 44 Q61 90 60 128 M76 46 Q80 80 86 118" stroke="#3d2a14" stroke-opacity=".22" stroke-width="2" fill="none"/>
+          <ellipse cx="60" cy="27" rx="25" ry="8" fill="#6d4e2b"/>
+          <ellipse cx="60" cy="25" rx="21" ry="5" fill="#2b1c0d"/>
+          <path d="M34 30 Q60 38 86 30" stroke="#d8c9a3" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <path d="M84 31 q10 6 6 20 q-3 8 2 14" stroke="#d8c9a3" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="92" cy="66" r="3.5" fill="#c4b38a"/>
+          <text x="60" y="98" text-anchor="middle" class="bag-label">TAP</text>
+        </svg>
+      </button>
+
+      <div class="current">
+        <div class="coin-slot" id="coinSlot"><div class="coin-placeholder">?</div></div>
+      </div>
+
+      <div class="call-info">
+        <div class="call-text" id="callText">Ready when you are</div>
+        <div class="call-count" id="callCount">0 / 90 called</div>
+        <div class="tray" id="tray" aria-label="Recently called"></div>
+      </div>
+    </section>
+
+    <section class="tickets-area">
+      <div class="tickets" id="tickets"></div>
+
+      <div class="claims" id="claims"></div>
+      <p class="hint" id="hint">Tap a number on your ticket to dab it. When you complete a prize, press its button to claim before someone else does!</p>
+    </section>
+
+    <aside class="side">
+      <details class="board-box" id="boardBox">
+        <summary>Caller's board</summary>
+        <div class="board" id="board"></div>
+      </details>
+      <div class="players" id="players"></div>
+    </aside>
+  </main>
+
+  <!-- Setup -->
+  <div class="modal" id="setup" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+    <div class="card">
+      <h2 id="setupTitle" class="card-title">Let's play Housey</h2>
+      <label class="field">
+        <span>Your name</span>
+        <input id="nameInput" maxlength="14" autocomplete="off" placeholder="You">
+      </label>
+      <div class="field">
+        <span>Tickets</span>
+        <div class="seg" data-name="tickets">
+          <button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button>
+        </div>
+      </div>
+      <div class="field">
+        <span>Players at the table</span>
+        <div class="seg" data-name="bots">
+          <button data-v="0">Just me</button><button data-v="2">+2</button><button data-v="4">+4</button><button data-v="6">+6</button>
+        </div>
+      </div>
+      <div class="field">
+        <span>Calling speed</span>
+        <div class="seg" data-name="speed">
+          <button data-v="8000">Relaxed</button><button data-v="5500">Normal</button><button data-v="3500">Quick</button><button data-v="0">I'll tap</button>
+        </div>
+      </div>
+      <div class="field toggles">
+        <label class="toggle"><input type="checkbox" id="voiceInput" checked><span>Caller's voice</span></label>
+        <label class="toggle"><input type="checkbox" id="autoInput"><span>Auto‑dab for me</span></label>
+      </div>
+      <button class="big-btn" id="startBtn">Deal tickets</button>
+      <details class="rules">
+        <summary>How to play</summary>
+        <ul>
+          <li>Numbers 1–90 are pulled from the bag one at a time and called out.</li>
+          <li>If the number is on your ticket, tap it to dab it with ink.</li>
+          <li><b>Early Five</b>: first 5 numbers dabbed on a ticket. <b>Top / Middle / Bottom Line</b>: every number in that row. <b>Full House</b>: all 15 numbers.</li>
+          <li>Press the prize button to claim it. Claim a prize you haven't got and the caller shouts “Bogey!”.</li>
+          <li>The game ends when someone wins Full House.</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="modal hidden" id="results" role="dialog" aria-modal="true" aria-labelledby="resultsTitle">
+    <div class="card">
+      <h2 id="resultsTitle" class="card-title">Game over</h2>
+      <ol class="ranking" id="ranking"></ol>
+      <div class="result-actions">
+        <button class="big-btn" id="againBtn">Play again</button>
+        <button class="link-btn" id="settingsBtn">Change settings</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="announce" id="announce" aria-live="assertive"></div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>
