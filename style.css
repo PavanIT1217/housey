@@ -1,3 +1,8 @@
+@font-face { font-family: "Alfa Slab One"; font-weight: 400; font-display: swap; src: url(fonts/alfa-slab-one.woff2) format("woff2"); }
+@font-face { font-family: "Caveat"; font-weight: 700; font-display: swap; src: url(fonts/caveat-700.woff2) format("woff2"); }
+@font-face { font-family: "Courier Prime"; font-weight: 700; font-display: swap; src: url(fonts/courier-prime-700.woff2) format("woff2"); }
+@font-face { font-family: "Roboto Slab"; font-weight: 100 900; font-display: swap; src: url(fonts/roboto-slab.woff2) format("woff2"); }
+
 :root {
   --wood-1: #6b4224;
   --wood-2: #4a2b16;

@@ -524,4 +524,9 @@
   game = { players: [], me: { tickets: [makeTicket()] }, calledSet: new Set(), prizes: {}, over: true };
   renderTickets(); renderBoard(); renderClaims();
   $('#players').innerHTML = '';
+
+  // Offline support: cache the game so it opens without a connection.
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
 })();
