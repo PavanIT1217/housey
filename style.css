@@ -382,6 +382,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .rules { margin-top: 14px; font-size: 14px; line-height: 1.5; }
 .rules summary { cursor: pointer; font-weight: 800; }
 .rules ul { padding-left: 18px; margin: 8px 0 0; }
+.legal-links { margin: 14px 0 0; text-align: center; font-size: 13px; opacity: .75; }
+.legal-links a { color: var(--ink-print); }
 .ranking { list-style: none; padding: 0; margin: 0 0 14px; }
 .ranking li { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px dashed rgba(30, 42, 74, .3); }
 .ranking .medal { width: 28px; text-align: center; font-size: 20px; }

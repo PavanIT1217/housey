@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../game/controller.dart';
 import '../game/rules.dart';
@@ -146,8 +147,33 @@ class _SetupCardState extends State<SetupCard> {
               children: [_Rules()],
             ),
           ),
+          const _InfoLinks(),
         ],
       ),
+    );
+  }
+}
+
+/// Support, privacy policy and terms, on the website.
+class _InfoLinks extends StatelessWidget {
+  const _InfoLinks();
+
+  static const _site = 'https://housey.webappslab.com/';
+
+  @override
+  Widget build(BuildContext context) {
+    Widget link(String label, String page) => TextButton(
+      onPressed: () => launchUrl(Uri.parse('$_site$page'), mode: LaunchMode.externalApplication),
+      style: TextButton.styleFrom(
+        foregroundColor: Palette.ink.withValues(alpha: .75),
+        textStyle: const TextStyle(fontSize: 13, decoration: TextDecoration.underline),
+        visualDensity: VisualDensity.compact,
+      ),
+      child: Text(label),
+    );
+    return Wrap(
+      alignment: WrapAlignment.center,
+      children: [link('Support', 'support.html'), link('Privacy', 'privacy.html'), link('Terms', 'terms.html')],
     );
   }
 }

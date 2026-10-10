@@ -1,8 +1,9 @@
 // Bump VERSION when the file list changes; edits to cached files update on their own.
-const VERSION = 'housey-v1';
+const VERSION = 'housey-v2';
 const FILES = [
   './', 'index.html', 'style.css', 'game.js', 'manifest.webmanifest',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',
+  'privacy.html', 'terms.html', 'support.html', 'legal.css',
   'fonts/alfa-slab-one.woff2', 'fonts/caveat-700.woff2', 'fonts/courier-prime-700.woff2', 'fonts/roboto-slab.woff2',
 ];
 

@@ -59,3 +59,21 @@ assets/icon/              adaptive launcher icon layers, made from ../icons/icon
 ```
 
 To change the launcher icon, replace `../icons/icon-512.png` (and the layers in `assets/icon/`), then run `dart run flutter_launcher_icons`.
+
+## Store listing
+
+The website has the pages both stores ask for:
+
+| Store field | URL |
+| --- | --- |
+| Privacy policy (App Store and Google Play) | https://housey.webappslab.com/privacy.html |
+| Support URL (App Store) | https://housey.webappslab.com/support.html |
+| Terms of use (optional) | https://housey.webappslab.com/terms.html |
+| Marketing URL (App Store, optional) | https://housey.webappslab.com/ |
+
+Answers for the privacy forms (Google Play "Data safety", App Store "App Privacy"), which match the privacy policy:
+
+- **Data collected:** none. **Data shared:** none. No account, so no account deletion is needed.
+- **Tracking / ads / analytics:** none.
+- **Content rating / gambling questions:** no real money, no purchases, prizes are points only. The other players are computer-controlled.
+- **Contact email:** pavan@webappslab.com

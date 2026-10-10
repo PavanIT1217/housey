@@ -1,0 +1,71 @@
+/* Shared look for the privacy, terms and support pages: a printed sheet on the table. */
+@font-face { font-family: "Alfa Slab One"; font-weight: 400; font-display: swap; src: url(fonts/alfa-slab-one.woff2) format("woff2"); }
+@font-face { font-family: "Roboto Slab"; font-weight: 100 900; font-display: swap; src: url(fonts/roboto-slab.woff2) format("woff2"); }
+
+:root {
+  --wood-1: #6b4224;
+  --wood-2: #4a2b16;
+  --paper: #f6efdc;
+  --ink: #1e2a4a;
+  --red: #b3261e;
+  --brass: #e7c26b;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: "Roboto Slab", Georgia, serif;
+  line-height: 1.6;
+  color: var(--ink);
+  background-color: var(--wood-2);
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 210, 150, .18), transparent 60%),
+    linear-gradient(90deg, var(--wood-2), var(--wood-1) 30%, #5a361c 55%, var(--wood-1) 75%, var(--wood-2));
+  background-attachment: fixed;
+  padding: 0 16px 48px;
+}
+
+.top {
+  max-width: 760px; margin: 0 auto; padding: max(18px, env(safe-area-inset-top)) 0 18px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.logo {
+  font-family: "Alfa Slab One", serif; font-size: 28px; letter-spacing: 1px; text-decoration: none;
+  color: var(--brass); text-shadow: 0 2px 0 #6b4a12, 0 4px 8px rgba(0, 0, 0, .6);
+}
+.top nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.top nav a {
+  color: #f3e6cc; text-decoration: none; font-size: 14px; font-weight: 600;
+  padding: 6px 12px; border-radius: 20px; background: rgba(0, 0, 0, .25);
+}
+.top nav a[aria-current="page"] { background: var(--brass); color: #3a1f00; }
+
+main {
+  max-width: 760px; margin: 0 auto; padding: 28px clamp(18px, 5vw, 44px) 32px;
+  background: linear-gradient(170deg, #fbf6e8, var(--paper) 50%, #efe4c7);
+  border-radius: 4px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .45), 0 3px 6px rgba(0, 0, 0, .3);
+}
+h1 { font-family: "Alfa Slab One", serif; font-weight: 400; color: var(--red); font-size: clamp(28px, 6vw, 38px); line-height: 1.15; margin: 0 0 6px; }
+.updated { margin: 0 0 22px; font-size: 14px; opacity: .7; }
+h2 { font-size: 20px; margin: 30px 0 8px; }
+h3 { font-size: 16px; margin: 20px 0 4px; }
+p, li { font-size: 16px; }
+ul { padding-left: 22px; }
+a { color: var(--red); }
+.summary {
+  margin: 0 0 8px; padding: 14px 18px; border: 2px solid var(--ink); border-radius: 8px;
+  background: rgba(255, 255, 255, .45);
+}
+.summary p { margin: 0; }
+table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px dashed rgba(30, 42, 74, .35); }
+th { width: 34%; }
+
+footer { max-width: 760px; margin: 20px auto 0; text-align: center; font-size: 14px; color: rgba(243, 230, 204, .75); }
+footer a { color: var(--brass); }
+
+@media (max-width: 560px) {
+  th, td { display: block; width: auto; padding: 4px 0; }
+  th { padding-top: 12px; border-bottom: 0; }
+}
