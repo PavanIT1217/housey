@@ -22,6 +22,10 @@ Updates download in the background and show up the next time you open the game.
 
 Space bar pauses or resumes (or draws the next coin in tap mode).
 
+## Mobile app
+
+`mobile/` holds a native Flutter version of the game for Android and iOS. See [mobile/README.md](mobile/README.md) to run or build it.
+
 ## Files
 
 - `index.html`: page structure
@@ -29,3 +33,4 @@ Space bar pauses or resumes (or draws the next coin in tap mode).
 - `game.js`: ticket generation, the caller, computer players, claims, and sound (made with Web Audio, so there are no audio files)
 - `sw.js`, `manifest.webmanifest`, `icons/`: offline support and the installable app
 - `fonts/`: local copies of the fonts (from Google Fonts, SIL Open Font License) so text looks right offline
+- `mobile/`: the Flutter app for Android and iOS
