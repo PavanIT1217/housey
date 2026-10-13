@@ -33,4 +33,11 @@ Space bar pauses or resumes (or draws the next coin in tap mode).
 - `game.js`: ticket generation, the caller, computer players, claims, and sound (made with Web Audio, so there are no audio files)
 - `sw.js`, `manifest.webmanifest`, `icons/`: offline support and the installable app
 - `fonts/`: local copies of the fonts (from Google Fonts, SIL Open Font License) so text looks right offline
+- `how-to-play.html`, `tambola-calls.html`: the Tambola rules and the list of all 90 traditional calls
+- `privacy.html`, `terms.html`, `support.html`, `legal.css`: information pages
+- `robots.txt`, `sitemap.xml`, `404.html`, `og-image.jpg`, `screenshots/`: search engines, link previews and install screens
 - `mobile/`: the Flutter app for Android and iOS
+
+## Search engines
+
+Each page has its own title, description and canonical URL, plus Open Graph tags so shared links show a preview card. The home page carries schema.org structured data (the game, the website and an FAQ), and the sitemap lists every page. If you add a page, add it to `sitemap.xml` and to the `FILES` list in `sw.js`.
