@@ -1,7 +1,10 @@
 {
-  "name": "Housey",
+  "id": "/",
+  "name": "Housey: Tambola & Housie",
   "short_name": "Housey",
-  "description": "Play Housey (Tambola) with wooden coins, paper tickets and an ink dauber.",
+  "description": "Play Housey (Tambola, Housie) with wooden number coins, paper tickets and an ink dauber. Free, no sign-up, works offline.",
+  "lang": "en",
+  "dir": "ltr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,8 +12,43 @@
   "background_color": "#2e1a0c",
   "theme_color": "#3b2414",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": [
+    "games",
+    "entertainment",
+    "family"
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/wide.jpg",
+      "sizes": "1280x800",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Housey on a computer: the caller, two tickets and the caller's board"
+    },
+    {
+      "src": "screenshots/narrow.jpg",
+      "sizes": "780x1688",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Housey on a phone: dabbing numbers on a ticket"
+    }
   ]
 }
