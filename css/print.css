@@ -77,7 +77,7 @@
 @page { size: A4 portrait; margin: 0; }
 @media print {
   body.print-tool { background: #fff !important; padding: 0; }
-  .print-tool .topbar, .print-tool .print-controls, .print-tool .site-footer { display: none !important; }
+  .print-tool .topbar, .print-tool .print-controls, .print-tool .tool-about, .print-tool .site-footer { display: none !important; }
   .print-tool .tool-layout { padding: 0; max-width: none; gap: 0; }
   .print-preview { zoom: 1 !important; gap: 0; }
   .print-page { box-shadow: none; break-after: page; height: 296mm; }

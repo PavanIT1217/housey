@@ -14,6 +14,109 @@
   <meta property="og:description" content="Draw and call Tambola numbers out loud for your own game on paper tickets. Free, no sign-up, works offline.">
   <meta property="og:image" content="https://housey.webappslab.com/og-image.jpg">
   <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="A Housey ticket dabbed with pink ink beside a wooden number coin on a wooden table">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:title" content="Tambola Number Caller · Housey">
+  <meta name="twitter:description" content="Draw and call Tambola numbers out loud for your own game on paper tickets. Free, no sign-up, works offline.">
+  <meta name="twitter:image" content="https://housey.webappslab.com/og-image.jpg">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://housey.webappslab.com/caller.html#app",
+        "name": "Housey Tambola Number Caller",
+        "url": "https://housey.webappslab.com/caller.html",
+        "description": "A free Tambola (Housie) number caller for games played on paper tickets. It draws numbers 1 to 90 at random, reads them out loud and shows the caller's board.",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Any (web browser)",
+        "browserRequirements": "Requires JavaScript",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        },
+        "featureList": [
+          "Draws numbers 1 to 90 fairly, one at a time",
+          "Reads each number out loud, with a choice of voice, speaking speed and call style",
+          "Automatic calling at the speed you choose, or one number per tap",
+          "Undo the last number",
+          "Check any ticket by its code or QR code",
+          "The game is saved, so refreshing the page does not lose it",
+          "Full screen for a TV or projector",
+          "Works offline"
+        ],
+        "image": "https://housey.webappslab.com/og-image.jpg",
+        "inLanguage": "en",
+        "publisher": {
+          "@id": "https://housey.webappslab.com/#org"
+        },
+        "isPartOf": {
+          "@id": "https://housey.webappslab.com/#website"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Housey",
+            "item": "https://housey.webappslab.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Number caller",
+            "item": "https://housey.webappslab.com/caller.html"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://housey.webappslab.com/caller.html#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Do I need Housey tickets to use the number caller?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The caller works with any Tambola or Housie tickets. Housey tickets add a code and QR code, so you can check a winning ticket in a second."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I change how fast numbers are called?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Pick Relaxed, Normal or Quick, or set any time from 2 to 20 seconds between numbers. You can also tap for each number yourself."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does the caller say the traditional Tambola calls?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Only if you want it to. By default it just says the number. Switch to Traditional to hear calls like \"Two little ducks, 22\"."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What happens if I refresh the page?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Nothing is lost. The numbers called so far are saved in your browser, so you can carry on where you left off."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
   <link rel="preload" href="fonts/roboto-slab.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/alfa-slab-one.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/style.css">
@@ -90,7 +193,7 @@
     </div>
 
     <article class="sheet tool-about">
-      <h2>A Tambola number caller for your own game</h2>
+      <h1>A Tambola number caller for your own game</h1>
       <p>Play Housey with real paper tickets: <a href="print.html">print tickets</a>, hand them out, and let this page draw the numbers and read them out. It works on a phone, or on a laptop plugged into a TV for a big room.</p>
       <ul>
         <li>Press <b>Start calling</b> and numbers come out on their own at the speed you set. Pause any time.</li>
@@ -99,6 +202,12 @@
         <li>The game is saved as you go, so refreshing the page or closing the browser doesn't lose it.</li>
       </ul>
       <p>Keyboard: <b>Space</b> starts or pauses, <b>N</b> draws the next number, <b>U</b> undoes.</p>
+
+      <h2>Questions</h2>
+      <details><summary>Do I need Housey tickets to use the number caller?</summary><p>No. The caller works with any Tambola or Housie tickets. Housey tickets add a code and QR code, so you can check a winning ticket in a second.</p></details>
+      <details><summary>Can I change how fast numbers are called?</summary><p>Yes. Pick Relaxed, Normal or Quick, or set any time from 2 to 20 seconds between numbers. You can also tap for each number yourself.</p></details>
+      <details><summary>Does the caller say the traditional Tambola calls?</summary><p>Only if you want it to. By default it just says the number. Switch to Traditional to hear calls like "Two little ducks, 22".</p></details>
+      <details><summary>What happens if I refresh the page?</summary><p>Nothing is lost. The numbers called so far are saved in your browser, so you can carry on where you left off.</p></details>
     </article>
   </main>
 

@@ -55,6 +55,7 @@
 .prize-list { margin: 0 0 10px; padding-left: 18px; }
 .prize-list .won { color: #1d6b38; font-weight: 800; list-style: none; margin-left: -18px; }
 .tool-about { max-width: none; }
+.sheet h1 { font-family: "Alfa Slab One", serif; font-weight: 400; color: var(--ticket-red); font-size: clamp(24px, 5vw, 32px); line-height: 1.2; margin: 0 0 10px; }
 .tool-about ul { padding-left: 22px; }
 
 /* ---------- My tickets ---------- */

@@ -23,10 +23,10 @@
 
   <main>
     <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: 10 October 2026</p>
+    <p class="updated">Last updated: 14 October 2026</p>
 
     <div class="summary">
-      <p><b>In short:</b> Housey doesn't collect, store or share any personal information. There are no accounts, ads, analytics or tracking. Your settings stay on your own device.</p>
+      <p><b>In short:</b> Housey doesn't collect, store or share any personal information. There are no accounts, ads, analytics or tracking. Your settings, games and tickets stay on your own device. The camera is only used, when you ask, to read a ticket's QR code.</p>
     </div>
 
     <p>This policy covers the Housey game at <a href="https://housey.webappslab.com/">housey.webappslab.com</a> and the Housey apps for Android and iOS. They're made by WebAppsLab ("we").</p>
@@ -35,14 +35,23 @@
     <p>Nothing. We don't run servers that receive data from the game, and we don't use analytics, advertising, crash reporting or any other third-party tracking tools. We never sell or share data, because we never have any.</p>
 
     <h2>What stays on your device</h2>
-    <p>To remember your choices between games, Housey saves these settings on your device:</p>
+    <p>To remember your choices and keep your games safe if you close or refresh the page, Housey saves these on your device:</p>
     <ul>
       <li>the name you type on the setup card (optional; it only labels you at the table)</li>
-      <li>the number of tickets and players, the calling speed, and whether the caller's voice and auto-dab are on</li>
-      <li>whether sound is on</li>
+      <li>the number of tickets and players, the calling speed, auto-dab, and whether sound is on</li>
+      <li>the caller's voice settings: on or off, the voice you chose, speaking speed, pitch and what the caller says</li>
+      <li>a game in progress: the numbers called, the ticket codes, your dabs and the scores</li>
+      <li>the number caller's game in progress: the numbers called so far</li>
+      <li>tickets you've opened under "My tickets", with your dabs</li>
+      <li>your print options and the codes of the tickets you last made</li>
     </ul>
     <p>On the website these are kept in your browser's local storage. In the apps they're kept in the app's private storage. They never leave your device, and we can't see them.</p>
     <p>The website also saves a copy of its own files in your browser (a "service worker" cache) so the game opens without an internet connection. That copy holds only the game's files, not information about you.</p>
+
+    <h2>The camera and ticket QR codes</h2>
+    <p>Housey only turns on the camera when you press <b>Scan QR</b> to open or check a ticket, and it turns it off as soon as it has read a code or you cancel. The picture is examined on your device to find the QR code; it isn't recorded, saved or sent anywhere. Your browser or phone asks for your permission first, and you can always type the ticket code instead.</p>
+    <p>The QR code on a printed ticket is a link to that ticket on our website, like <code>https://housey.webappslab.com/ticket.html?t=HNZV-C92Z</code>. The code identifies the ticket's numbers, not a person. Opening the link is an ordinary visit to the website (see below).</p>
+    <p>When you print tickets or share a ticket PDF, your device's own print or share options are used. We don't receive the tickets or know who you share them with.</p>
 
     <h2>The website</h2>
     <p>The website is hosted on GitHub Pages. Like any web host, GitHub may record technical details of each visit, such as your IP address and browser type, to deliver the site and keep it secure. We don't receive or use those records. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a> for details.</p>
@@ -50,10 +59,10 @@
 
     <h2>The apps</h2>
     <ul>
-      <li><b>No internet access.</b> The Android app doesn't ask for internet permission, and neither app connects to the internet.</li>
-      <li><b>Caller's voice.</b> The numbers are read out by your device's built-in text-to-speech engine, provided by your phone's maker, Google or Apple. Housey only gives it the words to say, such as "Two little ducks, 22". How the engine works is covered by its provider's privacy policy. You can turn the voice off on the setup card.</li>
+      <li><b>No internet access.</b> The Android app doesn't ask for internet permission, and neither app connects to the internet. The QR scanner uses Google's ML Kit on Android and Apple's Vision framework on iPhone and iPad, both running entirely on your device. ML Kit is built to send anonymous usage statistics to Google, but without internet permission it can't, so nothing is sent.</li>
+      <li><b>Caller's voice.</b> The numbers are read out by your device's built-in text-to-speech engine, provided by your phone's maker, Google or Apple. Housey only gives it the words to say, such as "Number 22". How the engine works is covered by its provider's privacy policy. You can turn the voice off in the caller settings.</li>
       <li><b>Vibration and screen.</b> The app vibrates when you dab or win, and keeps the screen on during a game. Neither involves any personal data.</li>
-      <li><b>No sensitive permissions.</b> The apps don't use your camera, microphone, location, contacts, photos or files.</li>
+      <li><b>Camera, only for QR codes.</b> The apps ask for camera access the first time you scan a ticket, and use it only as described above. They don't use your microphone, location, contacts or photos.</li>
     </ul>
 
     <h2>Deleting your data</h2>

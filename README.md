@@ -46,7 +46,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is organised a
 
 ## Mobile app
 
-`mobile/` holds a native Flutter version of the game for Android and iOS. See [mobile/README.md](mobile/README.md) to run or build it.
+`mobile/` holds a native Flutter version for Android and iOS with the same features: the game, the number caller, my tickets (with a QR scanner) and printable tickets as a PDF. Ticket codes work across both: a ticket printed from the app opens on the website, and the other way round. See [mobile/README.md](mobile/README.md) to run or build it.
 
 ## Files
 

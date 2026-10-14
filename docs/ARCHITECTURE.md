@@ -57,10 +57,14 @@ Dependencies only point downwards: `pages → ui → services → core`. Nothing
 - Players press a claim button; the server checks it with `meetsPrize()` against the `draws` table and announces the result to the room.
 - First valid claim wins (ordered by server time), which settles disputes.
 
-### Phase 4: offline first and the mobile app
+### Phase 4: offline first
 - Local records become a cache with a small queue of pending actions to sync when back online.
-- The Flutter app in `mobile/` should use the same ticket code format. Port `random.js`, `ticket-code.js` and `generateGrid()` to Dart bit for bit, and test against the same fixed codes as `tests/tickets.test.js`, or have the app fetch tickets from the API.
+- The Android app has no internet permission today (see `mobile/android/app/src/main/AndroidManifest.xml`). Online play means adding it back and updating the privacy policy and store data-safety answers.
 
 ### Not yet done (good next steps)
 - Traditional "strips" of 6 tickets that use all 90 numbers exactly once, as a print option.
-- Speed and voice settings, the number caller, ticket codes and saved games in the mobile app (it has only the "number only" calls so far).
+- Opening ticket links straight in the app (Android App Links and iOS Universal Links), which needs `.well-known` files on the website and the app's release signing key.
+
+## The Flutter app
+
+`mobile/` mirrors this layout: `lib/core` (rules), `lib/services` (storage, settings, sound and voice, the ticket PDF), `lib/game` (controllers) and `lib/ui` (screens). `lib/core/random.dart`, `ticket_code.dart` and `tickets.dart` are step-for-step ports of their `js/core` counterparts. Both test suites check `tests/fixtures/ticket-codes.json`, so a code makes the same ticket in the app and on the website. A change to ticket generation must update both, and the fixtures must not change.

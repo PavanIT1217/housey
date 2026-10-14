@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#3b2414">
-  <title>Housey: Play Tambola &amp; Housie Online Free, Works Offline</title>
-  <meta name="description" content="Play Housey (Tambola, Housie) free online: paper tickets, an ink dauber and a caller who reads the traditional calls. No sign-up, works offline.">
+  <title>Housey: Free Tambola Game, Number Caller &amp; Printable Tickets</title>
+  <meta name="description" content="Play Tambola (Housie) free online, or host your own game with printable tickets and a number caller that reads numbers aloud. No sign-up, works offline.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://housey.webappslab.com/">
   <meta name="author" content="WebAppsLab">
@@ -14,16 +14,16 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Housey">
   <meta property="og:url" content="https://housey.webappslab.com/">
-  <meta property="og:title" content="Housey: Play Tambola &amp; Housie Online Free">
-  <meta property="og:description" content="Wooden number coins, paper tickets and an ink dauber. Play Tambola in your browser, against friendly computer players. Free, no sign-up, works offline.">
+  <meta property="og:title" content="Housey: Free Tambola Game, Number Caller &amp; Printable Tickets">
+  <meta property="og:description" content="Play Tambola against friendly computer players, or host a game on paper: print tickets with QR codes and let the number caller read out the numbers. Free, works offline.">
   <meta property="og:image" content="https://housey.webappslab.com/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="A Housey ticket dabbed with pink ink beside a wooden number coin on a wooden table">
   <meta property="og:locale" content="en_IN">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Housey: Play Tambola &amp; Housie Online Free">
-  <meta name="twitter:description" content="Wooden number coins, paper tickets and an ink dauber. Free, no sign-up, works offline.">
+  <meta name="twitter:title" content="Housey: Free Tambola Game, Number Caller &amp; Printable Tickets">
+  <meta name="twitter:description" content="Play Tambola online, print tickets and call numbers for your own game. Free, works offline.">
   <meta name="twitter:image" content="https://housey.webappslab.com/og-image.jpg">
 
   <link rel="preload" href="fonts/roboto-slab.woff2" as="font" type="font/woff2" crossorigin>
@@ -72,7 +72,20 @@
         "genre": ["Board game", "Bingo", "Family game"],
         "gamePlatform": ["Web browser", "Android", "iOS"],
         "operatingSystem": "Any (web browser), Android, iOS",
-        "playMode": "SinglePlayer",
+        "playMode": ["SinglePlayer", "MultiPlayer"],
+        "featureList": [
+          "Play against up to 6 computer players",
+          "Choose the calling speed and the caller's voice",
+          "Numbers called plainly, or with the traditional calls",
+          "Games are saved, so refreshing the page doesn't lose them",
+          "Number caller for games on paper tickets",
+          "Printable tickets with a code and QR code on each",
+          "Open a printed ticket on a phone by scanning its QR code"
+        ],
+        "hasPart": [
+          { "@id": "https://housey.webappslab.com/caller.html#app" },
+          { "@id": "https://housey.webappslab.com/print.html#app" }
+        ],
         "numberOfPlayers": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 7 },
         "isAccessibleForFree": true,
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
@@ -87,7 +100,10 @@
           { "@type": "Question", "name": "Is Housey the same as Tambola and Housie?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Housey, Housie and Tambola are names for the same 90-number game, played on tickets of 3 rows and 9 columns with 15 numbers each." } },
           { "@type": "Question", "name": "Does Housey work offline?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. After your first visit the game saves itself on your device and works with no internet connection. You can also install it on your home screen like an app." } },
           { "@type": "Question", "name": "Which prizes can I win?", "acceptedAnswer": { "@type": "Answer", "text": "Early Five (the first five numbers on a ticket), Top Line, Middle Line, Bottom Line and Full House (all 15 numbers). The game ends when someone wins Full House." } },
-          { "@type": "Question", "name": "Can I play Housey on my phone?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Housey works in any modern browser on phones, tablets and computers, and there are apps for Android and iPhone." } }
+          { "@type": "Question", "name": "Can I play Housey on my phone?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Housey works in any modern browser on phones, tablets and computers, and there are apps for Android and iPhone." } },
+          { "@type": "Question", "name": "Can I print Tambola tickets?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Print tickets page makes as many unique tickets as you need, in your colours, with a code and QR code on each. Print them or save a PDF." } },
+          { "@type": "Question", "name": "Is there a number caller for games on paper tickets?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Number caller draws numbers 1 to 90, reads them out loud at the speed you choose, and can check any Housey ticket by its code or QR code." } },
+          { "@type": "Question", "name": "Will I lose my game if I refresh the page?", "acceptedAnswer": { "@type": "Answer", "text": "No. Housey saves your game as you play. After a refresh, choose Resume game to carry on." } }
         ]
       }
     ]
@@ -165,7 +181,8 @@
   <section class="about" id="about" aria-labelledby="aboutTitle">
     <article class="sheet">
       <h2 id="aboutTitle">Play Tambola online, the way it feels at the table</h2>
-      <p><strong>Housey</strong> is a free online <strong>Tambola</strong> game, also called <strong>Housie</strong>. Wooden number coins come out of a cloth bag, the caller reads each one with its traditional call ("Two little ducks, twenty-two"), and you dab your paper ticket with ink. Play against friendly computer players and race them to every prize.</p>
+      <p><strong>Housey</strong> is a free online <strong>Tambola</strong> game, also called <strong>Housie</strong>. Wooden number coins come out of a cloth bag, the caller reads out each number (plainly, or with traditional calls like "Two little ducks, twenty-two"), and you dab your paper ticket with ink. Play against friendly computer players and race them to every prize.</p>
+      <p>Hosting a game of your own? <a href="print.html">Print Tambola tickets</a> for everyone and let the <a href="caller.html">number caller</a> draw and read out the numbers.</p>
 
       <div class="features">
         <div><h3>Feels real</h3><p>Paper tickets, an ink dauber, wooden coins and a printed caller's board with red chips.</p></div>
@@ -203,6 +220,9 @@
       <details><summary>Does Housey work offline?</summary><p>Yes. After your first visit the game saves itself on your device and works with no internet connection. You can also install it on your home screen like an app.</p></details>
       <details><summary>Which prizes can I win?</summary><p>Early Five (the first five numbers on a ticket), Top Line, Middle Line, Bottom Line and Full House (all 15 numbers). The game ends when someone wins Full House.</p></details>
       <details><summary>Can I play Housey on my phone?</summary><p>Yes. Housey works in any modern browser on phones, tablets and computers, and there are apps for Android and iPhone.</p></details>
+      <details><summary>Can I print Tambola tickets?</summary><p>Yes. The <a href="print.html">Print tickets</a> page makes as many unique tickets as you need, in your colours, with a code and QR code on each. Print them or save a PDF.</p></details>
+      <details><summary>Is there a number caller for games on paper tickets?</summary><p>Yes. The <a href="caller.html">Number caller</a> draws numbers 1 to 90, reads them out loud at the speed you choose, and can check any Housey ticket by its code or QR code.</p></details>
+      <details><summary>Will I lose my game if I refresh the page?</summary><p>No. Housey saves your game as you play. After a refresh, choose <b>Resume game</b> to carry on.</p></details>
       <p>More questions? Visit <a href="support.html">Support</a>.</p>
     </article>
   </section>
