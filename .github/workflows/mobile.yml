@@ -2,9 +2,9 @@ name: Mobile app
 
 on:
   push:
-    paths: ['mobile/**', 'icons/**', '.github/workflows/mobile.yml']
+    paths: ['mobile/**', 'icons/**', 'tests/fixtures/**', '.github/workflows/mobile.yml']
   pull_request:
-    paths: ['mobile/**', 'icons/**', '.github/workflows/mobile.yml']
+    paths: ['mobile/**', 'icons/**', 'tests/fixtures/**', '.github/workflows/mobile.yml']
 
 concurrency:
   group: mobile-${{ github.ref }}

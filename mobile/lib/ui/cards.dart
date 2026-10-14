@@ -1,58 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../app_services.dart';
 import '../game/controller.dart';
-import '../game/rules.dart';
+import 'caller_settings.dart';
+import '../core/prizes.dart';
+import 'controls.dart';
 import 'look.dart';
-
-/// A sheet of paper dealt onto the table, used for the setup and results.
-class PaperCard extends StatelessWidget {
-  const PaperCard({super.key, required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeOutBack,
-      builder: (context, t, child) => Opacity(
-        opacity: t.clamp(0, 1),
-        child: Transform.translate(
-          offset: Offset(0, 40 * (1 - t)),
-          child: Transform.rotate(angle: -.07 * (1 - t), child: child),
-        ),
-      ),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 440),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment(-.2, -1),
-              end: Alignment(.2, 1),
-              colors: [Color(0xFFFBF6E8), Palette.paper, Color(0xFFEFE4C7)],
-            ),
-            borderRadius: BorderRadius.circular(6),
-            boxShadow: const [BoxShadow(color: Color(0x99000000), blurRadius: 50, offset: Offset(0, 20))],
-          ),
-          child: CustomPaint(
-            painter: const NoisePainter(seed: 21),
-            child: Material(
-              type: MaterialType.transparency,
-              child: SingleChildScrollView(padding: const EdgeInsets.fromLTRB(22, 22, 22, 18), child: child),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-const _cardTitle = TextStyle(fontFamily: Fonts.display, color: Palette.ticketRed, fontSize: 26);
+import 'tools_menu.dart';
 
 class SetupCard extends StatefulWidget {
-  const SetupCard({super.key, required this.game});
+  const SetupCard({super.key, required this.game, required this.services});
   final GameController game;
+  final AppServices services;
 
   @override
   State<SetupCard> createState() => _SetupCardState();
@@ -73,16 +33,23 @@ class _SetupCardState extends State<SetupCard> {
     widget.game.start();
   }
 
+  void _resume() {
+    widget.game.settings.name = _name.text;
+    FocusScope.of(context).unfocus();
+    widget.game.resume();
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = widget.game.settings;
+    final resumable = widget.game.resumableCount;
     return PaperCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text("Let's play Housey", textAlign: TextAlign.center, style: _cardTitle),
+          const Text("Let's play Housey", textAlign: TextAlign.center, style: cardTitle),
           const SizedBox(height: 16),
-          const _Label('Your name'),
+          const FieldLabel('Your name'),
           TextField(
             controller: _name,
             maxLength: 14,
@@ -102,36 +69,60 @@ class _SetupCardState extends State<SetupCard> {
             ),
           ),
           const SizedBox(height: 14),
-          const _Label('Tickets'),
-          _Segments(
+          const FieldLabel('Tickets'),
+          Segments(
             options: const {1: '1', 2: '2', 3: '3'},
             value: s.tickets,
             onChanged: (v) => setState(() => s.tickets = v),
           ),
           const SizedBox(height: 14),
-          const _Label('Players at the table'),
-          _Segments(
+          const FieldLabel('Players at the table'),
+          Segments(
             options: const {0: 'Just me', 2: '+2', 4: '+4', 6: '+6'},
             value: s.bots,
             onChanged: (v) => setState(() => s.bots = v),
           ),
           const SizedBox(height: 14),
-          const _Label('Calling speed'),
-          _Segments(
-            options: const {8000: 'Relaxed', 5500: 'Normal', 3500: 'Quick', 0: "I'll tap"},
-            value: s.speed,
-            onChanged: (v) => setState(() => s.speed = v),
+          const FieldLabel('Calling speed'),
+          SpeedControl(value: s.speed, onChanged: (v) => setState(() => s.speed = v)),
+          const SizedBox(height: 6),
+          CheckToggle(label: 'Auto-dab for me', value: s.auto, onChanged: (v) => setState(() => s.auto = v)),
+          Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              childrenPadding: const EdgeInsets.only(bottom: 8),
+              iconColor: Palette.ink,
+              collapsedIconColor: Palette.ink,
+              title: const Text(
+                "Caller's voice",
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: Palette.ink),
+              ),
+              children: [VoiceSettingsPanel(settings: s, fx: widget.game.fx)],
+            ),
           ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 16,
-            children: [
-              _Toggle(label: "Caller's voice", value: s.voice, onChanged: (v) => setState(() => s.voice = v)),
-              _Toggle(label: 'Auto-dab for me', value: s.auto, onChanged: (v) => setState(() => s.auto = v)),
-            ],
-          ),
-          const SizedBox(height: 10),
-          BigButton(label: 'Deal tickets', onPressed: _start),
+          if (resumable != null) ...[
+            Container(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+              margin: const EdgeInsets.only(bottom: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: Palette.ticketRed, width: 2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'You have a game in progress: $resumable of 90 numbers called.',
+                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: Palette.ink),
+                  ),
+                  const SizedBox(height: 6),
+                  BigButton(label: 'Resume game', onPressed: _resume),
+                ],
+              ),
+            ),
+          ],
+          BigButton(label: resumable == null ? 'Deal tickets' : 'Deal a new game', onPressed: _start),
           const SizedBox(height: 6),
           Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -146,6 +137,22 @@ class _SetupCardState extends State<SetupCard> {
               ),
               children: [_Rules()],
             ),
+          ),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final tool in Tool.values)
+                ActionChip(
+                  avatar: Icon(tool.icon, size: 18, color: Palette.ink),
+                  label: Text(tool.label),
+                  labelStyle: const TextStyle(color: Palette.ink, fontWeight: FontWeight.w700),
+                  color: WidgetStatePropertyAll(Colors.white.withValues(alpha: .45)),
+                  side: const BorderSide(color: Palette.ink, width: 1.5),
+                  onPressed: () => openTool(context, widget.services, tool),
+                ),
+            ],
           ),
           const _InfoLinks(),
         ],
@@ -220,151 +227,6 @@ class _Rules extends StatelessWidget {
   }
 }
 
-class _Label extends StatelessWidget {
-  const _Label(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 6),
-    child: Text(
-      text.toUpperCase(),
-      style: TextStyle(
-        fontSize: 12,
-        letterSpacing: 1.5,
-        fontWeight: FontWeight.w600,
-        color: Palette.ink.withValues(alpha: .7),
-      ),
-    ),
-  );
-}
-
-class _Segments extends StatelessWidget {
-  const _Segments({required this.options, required this.value, required this.onChanged});
-  final Map<int, String> options;
-  final int value;
-  final ValueChanged<int> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final entries = options.entries.toList();
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Palette.ink, width: 2),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            for (var i = 0; i < entries.length; i++) ...[
-              if (i > 0) const VerticalDivider(width: 1.5, thickness: 1.5, color: Palette.ink),
-              Expanded(
-                child: Semantics(
-                  selected: entries[i].key == value,
-                  button: true,
-                  child: InkWell(
-                    onTap: () => onChanged(entries[i].key),
-                    child: Container(
-                      color: entries[i].key == value ? Palette.ink : Colors.transparent,
-                      padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 4),
-                      alignment: Alignment.center,
-                      child: Text(
-                        entries[i].value,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: entries[i].key == value ? Palette.paper : Palette.ink,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Toggle extends StatelessWidget {
-  const _Toggle({required this.label, required this.value, required this.onChanged});
-  final String label;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: () => onChanged(!value),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Checkbox(
-          value: value,
-          onChanged: (v) => onChanged(v ?? false),
-          activeColor: Palette.ticketRed,
-          side: const BorderSide(color: Palette.ink, width: 2),
-          visualDensity: VisualDensity.compact,
-        ),
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Palette.ink),
-        ),
-      ],
-    ),
-  );
-}
-
-class BigButton extends StatefulWidget {
-  const BigButton({super.key, required this.label, required this.onPressed});
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  State<BigButton> createState() => _BigButtonState();
-}
-
-class _BigButtonState extends State<BigButton> {
-  var _down = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _down = true),
-        onTapUp: (_) => setState(() => _down = false),
-        onTapCancel: () => setState(() => _down = false),
-        onTap: widget.onPressed,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 80),
-          transform: Matrix4.translationValues(0, _down ? 3 : 0, 0),
-          padding: const EdgeInsets.all(14),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFFD23A2F), Color(0xFF9E1F17)],
-            ),
-            boxShadow: [
-              BoxShadow(color: const Color(0xFF5E0F0A), offset: Offset(0, _down ? 1 : 4)),
-              BoxShadow(color: const Color(0x59000000), blurRadius: _down ? 6 : 14, offset: Offset(0, _down ? 3 : 8)),
-            ],
-          ),
-          child: Text(
-            widget.label,
-            style: const TextStyle(fontFamily: Fonts.display, fontSize: 20, letterSpacing: 1, color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class ResultsCard extends StatelessWidget {
   const ResultsCard({super.key, required this.game});
   final GameController game;
@@ -383,7 +245,7 @@ class ResultsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(title, textAlign: TextAlign.center, style: _cardTitle),
+          Text(title, textAlign: TextAlign.center, style: cardTitle),
           const SizedBox(height: 16),
           for (var i = 0; i < ranked.length; i++)
             Container(

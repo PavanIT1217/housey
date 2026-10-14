@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#3b2414">
+  <title>Printable Tambola Tickets: Free Housie Ticket Generator · Housey</title>
+  <meta name="description" content="Make and print free Tambola (Housie) tickets. Choose how many, the colours and the layout, or start from a preset. Every ticket has a code and QR code.">
+  <link rel="canonical" href="https://housey.webappslab.com/print.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Housey">
+  <meta property="og:url" content="https://housey.webappslab.com/print.html">
+  <meta property="og:title" content="Printable Tambola Tickets · Housey">
+  <meta property="og:description" content="Free Tambola ticket generator: pick a number of tickets and colours, then print or save as PDF.">
+  <meta property="og:image" content="https://housey.webappslab.com/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="A Housey ticket dabbed with pink ink beside a wooden number coin on a wooden table">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:title" content="Printable Tambola Tickets · Housey">
+  <meta name="twitter:description" content="Free Tambola ticket generator: pick a number of tickets and colours, then print or save as PDF.">
+  <meta name="twitter:image" content="https://housey.webappslab.com/og-image.jpg">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://housey.webappslab.com/print.html#app",
+        "name": "Housey Tambola Ticket Generator",
+        "url": "https://housey.webappslab.com/print.html",
+        "description": "Make and print free Tambola (Housie) tickets. Choose how many, the colours and the layout, or start from a preset. Every ticket is unique and has a code and a QR code.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any (web browser)",
+        "browserRequirements": "Requires JavaScript",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        },
+        "featureList": [
+          "Up to 600 unique tickets at a time",
+          "4, 6 or 12 tickets on each A4 page",
+          "Seven colours, mixed colours or an ink saver",
+          "Presets for family nights, kitty parties, festivals and office events",
+          "A title and footer line on every ticket",
+          "A code and QR code on every ticket, to play it on a phone or check it",
+          "Print, save as PDF or download a list of codes"
+        ],
+        "image": "https://housey.webappslab.com/og-image.jpg",
+        "inLanguage": "en",
+        "publisher": {
+          "@id": "https://housey.webappslab.com/#org"
+        },
+        "isPartOf": {
+          "@id": "https://housey.webappslab.com/#website"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Housey",
+            "item": "https://housey.webappslab.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Print tickets",
+            "item": "https://housey.webappslab.com/print.html"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://housey.webappslab.com/print.html#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Are the printable Tambola tickets free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Make and print as many tickets as you like, with no sign-up and no watermark."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are all the tickets different?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Every ticket gets its own code, and the numbers come from the code, so no two tickets in a batch are the same."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the QR code on each ticket for?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Scanning it opens the ticket on a phone, where it can be dabbed on screen. The number caller can also check any ticket by its code when someone claims a prize."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I print tickets in colour or black and white?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Both. Choose one of seven colours, mixed colours for a party, or the black ink saver."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link rel="preload" href="fonts/roboto-slab.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/tools.css">
+  <link rel="stylesheet" href="css/print.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+</head>
+<body class="tool-page print-tool">
+  <header class="topbar">
+    <a class="logo" href="./">Housey <span class="tagline">Print tickets</span></a>
+  </header>
+
+  <main class="tool-layout">
+    <section class="panel print-controls" aria-labelledby="printTitle">
+      <h1 id="printTitle">Print Tambola tickets</h1>
+
+      <div class="field">
+        <span>Start from a preset</span>
+        <div class="presets" id="presets"></div>
+      </div>
+
+      <div class="print-form">
+        <label class="field">
+          <span>Number of tickets</span>
+          <input type="number" id="countInput" min="1" max="600" inputmode="numeric">
+        </label>
+        <div class="field">
+          <span>Tickets per page</span>
+          <div class="seg" id="layoutSeg"></div>
+        </div>
+        <div class="field">
+          <span>Colour</span>
+          <div class="swatches" id="swatches">
+            <label class="swatch custom" title="Pick your own colour" data-theme="custom">
+              <input type="color" id="customColor" aria-label="Pick your own colour">
+            </label>
+          </div>
+        </div>
+        <label class="field">
+          <span>Title on each ticket</span>
+          <input type="text" id="titleInput" maxlength="40">
+        </label>
+        <label class="field">
+          <span>Footer line (optional)</span>
+          <input type="text" id="footerInput" maxlength="60" placeholder="e.g. ₹20 a ticket · Sunday 7 pm">
+        </label>
+        <label class="field">
+          <span>First ticket number</span>
+          <input type="number" id="startInput" min="1" inputmode="numeric">
+        </label>
+        <div class="field toggles">
+          <label class="toggle"><input type="checkbox" id="qrInput"><span>QR code and ticket code</span></label>
+        </div>
+      </div>
+
+      <div class="print-actions">
+        <button class="big-btn" id="printBtn">🖨 Print or save as PDF</button>
+        <button class="ctrl-btn" id="generateBtn">Make new tickets</button>
+        <button class="ctrl-btn" id="csvBtn">Download code list</button>
+      </div>
+      <p class="note" id="printSummary"></p>
+      <p class="note">Every ticket is different. Players can scan the QR code to play the ticket on their phone, and the <a href="caller.html">number caller</a> can check any ticket by its code.</p>
+    </section>
+
+    <article class="sheet tool-about">
+      <h2>Printable Tambola tickets, free</h2>
+      <p>Hosting Tambola at home, a kitty party or an office Diwali event? Make every player a ticket here, print them (or save a PDF to share), and run the game with the <a href="caller.html">number caller</a>. Each ticket follows the usual Housie rules: 3 rows and 9 columns, 15 numbers, 5 in every row.</p>
+      <details><summary>Are the printable Tambola tickets free?</summary><p>Yes. Make and print as many tickets as you like, with no sign-up and no watermark.</p></details>
+      <details><summary>Are all the tickets different?</summary><p>Yes. Every ticket gets its own code, and the numbers come from the code, so no two tickets in a batch are the same.</p></details>
+      <details><summary>What is the QR code on each ticket for?</summary><p>Scanning it opens the ticket on a phone, where it can be dabbed on screen. The number caller can also check any ticket by its code when someone claims a prize.</p></details>
+      <details><summary>Can I print tickets in colour or black and white?</summary><p>Both. Choose one of seven colours, mixed colours for a party, or the black ink saver.</p></details>
+    </article>
+
+    <div class="preview-wrap">
+      <div class="print-preview" id="preview"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav aria-label="More about Housey">
+      <a href="./">Play Housey</a>
+      <a href="caller.html">Number caller</a>
+      <a href="ticket.html">Open a ticket</a>
+      <a href="how-to-play.html">How to play</a>
+      <a href="support.html">Support</a>
+    </nav>
+    <p>© 2026 WebAppsLab</p>
+  </footer>
+
+  <script type="module" src="js/pages/print.js"></script>
+</body>
+</html>

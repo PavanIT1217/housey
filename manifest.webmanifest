@@ -2,7 +2,7 @@
   "id": "/",
   "name": "Housey: Tambola & Housie",
   "short_name": "Housey",
-  "description": "Play Housey (Tambola, Housie) with wooden number coins, paper tickets and an ink dauber. Free, no sign-up, works offline.",
+  "description": "Play Housey (Tambola, Housie) with wooden number coins, paper tickets and an ink dauber, or host your own game with printable tickets and a number caller. Free, no sign-up, works offline.",
   "lang": "en",
   "dir": "ltr",
   "start_url": "./",
@@ -49,6 +49,47 @@
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Housey on a phone: dabbing numbers on a ticket"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Number caller",
+      "short_name": "Caller",
+      "description": "Call numbers for a game on paper tickets",
+      "url": "caller.html",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Print tickets",
+      "short_name": "Print",
+      "description": "Make printable Tambola tickets",
+      "url": "print.html",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "My tickets",
+      "short_name": "Tickets",
+      "description": "Open a ticket by its QR code or code",
+      "url": "ticket.html",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }

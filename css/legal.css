@@ -1,6 +1,6 @@
 /* Shared look for the privacy, terms and support pages: a printed sheet on the table. */
-@font-face { font-family: "Alfa Slab One"; font-weight: 400; font-display: swap; src: url(fonts/alfa-slab-one.woff2) format("woff2"); }
-@font-face { font-family: "Roboto Slab"; font-weight: 100 900; font-display: swap; src: url(fonts/roboto-slab.woff2) format("woff2"); }
+@font-face { font-family: "Alfa Slab One"; font-weight: 400; font-display: swap; src: url(../fonts/alfa-slab-one.woff2) format("woff2"); }
+@font-face { font-family: "Roboto Slab"; font-weight: 100 900; font-display: swap; src: url(../fonts/roboto-slab.woff2) format("woff2"); }
 
 :root {
   --wood-1: #6b4224;

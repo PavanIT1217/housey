@@ -3,13 +3,33 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
-import 'fx.dart';
-import 'rules.dart';
-import 'settings.dart';
+import '../core/calls.dart';
+import '../core/number_draw.dart';
+import '../core/prizes.dart';
+import '../core/random.dart';
+import '../core/tickets.dart';
+import '../services/fx.dart';
+import '../services/settings.dart';
+import '../services/storage.dart';
+import 'table_events.dart';
+
+export 'table_events.dart';
+
+const botNames = ['Priya', 'Ravi', 'Aunty Meena', 'Uncle Joe', 'Fatima', 'Sam', 'Grandpa Dev', 'Lucy', 'Arjun', 'Rosa'];
+const botColors = [0xFFC0392B, 0xFF2471A3, 0xFF7D3C98, 0xFF1E8449, 0xFFB9770E, 0xFFA04000, 0xFF117A65, 0xFF884EA0];
+const _myColor = 0xFFB3261E;
 
 class Player {
-  Player({required this.id, required this.name, required this.color, required this.tickets, this.skill = 1})
-    : human = id == 0;
+  Player({
+    required this.id,
+    required this.name,
+    required this.color,
+    required this.tickets,
+    this.skill = 1,
+    this.points = 0,
+    List<String>? wins,
+  }) : human = id == 0,
+       wins = wins ?? [];
 
   final int id;
   final String name;
@@ -19,10 +39,40 @@ class Player {
 
   /// Chance a computer player notices a finished prize on each call.
   final double skill;
-  int points = 0;
-  final List<String> wins = [];
+  int points;
+  final List<String> wins;
 
   String get displayName => human && name != 'You' ? '$name (you)' : name;
+
+  Map<String, Object> toJson() => {
+    'id': id,
+    'name': name,
+    'color': color,
+    'skill': skill,
+    'points': points,
+    'wins': wins,
+    'tickets': [
+      for (final t in tickets) {'code': t.code, 'dabs': t.dabs.toList()},
+    ],
+  };
+
+  /// Rebuilds a saved player; throws if the data is damaged.
+  static Player fromJson(Map json) {
+    final tickets = [
+      for (final t in json['tickets'] as List)
+        (ticketFromCode(t['code'] as String) ?? (throw const FormatException('bad ticket code')))
+          ..dabs.addAll((t['dabs'] as List).cast<int>()),
+    ];
+    return Player(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      color: json['color'] as int,
+      tickets: tickets,
+      skill: (json['skill'] as num).toDouble(),
+      points: json['points'] as int,
+      wins: (json['wins'] as List).cast<String>(),
+    );
+  }
 }
 
 /// How a dab of ink sits on a cell: each one is stamped a little differently.
@@ -38,57 +88,49 @@ class DabLook {
   final int seed;
 }
 
-sealed class TableEvent {}
-
-class ToastEvent extends TableEvent {
-  ToastEvent(this.message);
-  final String message;
-}
-
-class AnnounceEvent extends TableEvent {
-  AnnounceEvent(this.title, this.subtitle, {this.bogey = false});
-  final String title, subtitle;
-  final bool bogey;
-}
-
-class BagShakeEvent extends TableEvent {}
-
 enum Stage { setup, playing, results }
 
 /// Runs a game of Housey: the caller, the computer players and the claims.
-class GameController extends ChangeNotifier {
-  GameController({required this.settings, Fx? fx, Random? random}) : fx = fx ?? Fx(), rng = random ?? Random() {
+/// The game is saved as it goes, so closing the app doesn't lose it.
+class GameController extends ChangeNotifier with TableEvents implements CallerMatModel {
+  GameController({required this.settings, Fx? fx, Random? random, this.saveSlot})
+    : fx = fx ?? Fx(),
+      rng = random ?? Random() {
     // Preview a ticket behind the setup card so the table never looks empty.
     players = [
-      Player(id: 0, name: 'You', color: 0xFFB3261E, tickets: [makeTicket(rng)]),
+      Player(id: 0, name: 'You', color: _myColor, tickets: [createTicket(fromRandom(rng))]),
     ];
+    _saved = _loadSaved();
   }
 
   final Settings settings;
   final Fx fx;
   final Random rng;
 
-  final _events = StreamController<TableEvent>.broadcast();
-  Stream<TableEvent> get events => _events.stream;
+  /// Where the state is saved; null to not save (tests).
+  final JsonRecord? saveSlot;
 
   Stage stage = Stage.setup;
   late List<Player> players;
   Player get me => players.first;
 
-  List<int> _remaining = [];
-  final List<int> called = [];
-  final Set<int> calledSet = {};
+  NumberDraw _draw = NumberDraw.shuffled();
   final Map<String, Player> claimed = {};
   bool paused = false;
   bool over = true;
+
+  /// A game in progress from an earlier visit, offered on the setup card.
+  _SavedGame? _saved;
 
   /// The caller waits a moment after each claim before drawing again.
   bool _holding = false;
   final Set<String> _pending = {};
 
-  /// The coin on the mat, the last few before it, and what the caller said.
+  @override
   int? currentCoin;
+  @override
   final List<int> tray = [];
+  @override
   String callText = 'Ready when you are';
 
   /// Looks of the dabs on each of my tickets, keyed by number.
@@ -102,10 +144,21 @@ class GameController extends ChangeNotifier {
   final List<Timer> _timers = [];
   Timer? _drawTimer;
 
-  /// Whether [n] has a chip on the caller's board: called, and its coin has landed.
-  bool onBoard(int n) => calledSet.contains(n) && (n != called.last || currentCoin == n);
+  List<int> get called => _draw.called;
+  bool isCalled(int n) => _draw.has(n);
 
-  String get callCount => '${called.length} / 90 called';
+  /// Whether [n] has a chip on the caller's board: called, and its coin has landed.
+  bool onBoard(int n) => isCalled(n) && (n != _draw.last || currentCoin == n);
+
+  @override
+  String get callCount => '${_draw.count} / 90 called';
+  @override
+  int get drawCount => _draw.count;
+  @override
+  bool get invitesTap => settings.manual && stage == Stage.playing && !over;
+
+  /// How many numbers the saved game had called, or null if there's nothing to resume.
+  int? get resumableCount => _saved?.draw.count;
 
   void _later(Duration d, VoidCallback fn) {
     late Timer t;
@@ -125,16 +178,43 @@ class GameController extends ChangeNotifier {
     _drawTimer = null;
   }
 
-  void _emit(TableEvent e) {
-    if (!_events.isClosed) _events.add(e);
+  // ---------- Saving ----------
+
+  void _save() {
+    final slot = saveSlot;
+    if (slot == null) return;
+    if (over) {
+      slot.clear();
+      return;
+    }
+    slot.save({
+      'draw': _draw.toJson(),
+      'players': [for (final p in players) p.toJson()],
+      'claimed': {for (final e in claimed.entries) e.key: e.value.id},
+    });
   }
 
-  void toast(String msg) => _emit(ToastEvent(msg));
+  _SavedGame? _loadSaved() {
+    final data = saveSlot?.load();
+    if (data is! Map) return null;
+    final draw = NumberDraw.fromJson(data['draw']);
+    if (draw == null) return null;
+    try {
+      final players = [for (final p in data['players'] as List) Player.fromJson(p as Map)];
+      if (players.isEmpty || !players.first.human) return null;
+      final claimed = <String, Player>{
+        for (final e in (data['claimed'] as Map).entries) e.key as String: players.firstWhere((p) => p.id == e.value),
+      };
+      return _SavedGame(draw, players, claimed);
+    } catch (_) {
+      return null;
+    }
+  }
 
   // ---------- Game flow ----------
 
   void start() {
-    unawaited(settings.save());
+    settings.save();
     newGame();
   }
 
@@ -143,7 +223,7 @@ class GameController extends ChangeNotifier {
     final names = (List.of(botNames)..shuffle(rng)).take(settings.bots).toList();
     final name = settings.name.trim();
     players = [
-      Player(id: 0, name: name.isEmpty ? 'You' : name, color: 0xFFB3261E, tickets: _deal()),
+      Player(id: 0, name: name.isEmpty ? 'You' : name, color: _myColor, tickets: _deal()),
       for (var i = 0; i < names.length; i++)
         Player(
           id: i + 1,
@@ -153,9 +233,50 @@ class GameController extends ChangeNotifier {
           skill: 0.55 + rng.nextDouble() * 0.35,
         ),
     ];
-    _remaining = List.generate(90, (i) => i + 1)..shuffle(rng);
-    called.clear();
-    calledSet.clear();
+    _reset(NumberDraw.shuffled(rng));
+    _saved = null;
+    if (settings.manual) {
+      callText = 'Tap the bag to draw';
+    } else {
+      callText = 'Shuffling the coins…';
+      _scheduleDraw(const Duration(milliseconds: 1800));
+    }
+    fx.keepAwake(true);
+    _save();
+    notifyListeners();
+  }
+
+  /// Carries on the game saved earlier (from this visit or a previous one).
+  void resume() {
+    final saved = _saved;
+    if (saved == null) return;
+    settings.save();
+    _clearTimers();
+    players = saved.players;
+    _reset(saved.draw);
+    claimed.addAll(saved.claimed);
+    _saved = null;
+    for (var i = 0; i < me.tickets.length; i++) {
+      final t = me.tickets[i];
+      for (final n in t.dabs) {
+        (dabLooks[t] ??= {})[n] = DabLook(rng);
+        if (!isCalled(n)) wrong.add('$i:$n');
+      }
+    }
+    final calledNow = _draw.called;
+    currentCoin = _draw.last;
+    if (calledNow.length > 1) {
+      tray.addAll(calledNow.sublist(max(0, calledNow.length - 7), calledNow.length - 1).reversed);
+    }
+    paused = !settings.manual;
+    callText = settings.manual ? 'Welcome back. Tap the bag to draw' : 'Welcome back. Press ▶ to carry on';
+    fx.keepAwake(true);
+    _botsConsider();
+    notifyListeners();
+  }
+
+  void _reset(NumberDraw draw) {
+    _draw = draw;
     claimed.clear();
     dabLooks.clear();
     wrong.clear();
@@ -168,33 +289,48 @@ class GameController extends ChangeNotifier {
     over = false;
     _holding = false;
     stage = Stage.playing;
-    if (settings.manual) {
-      callText = 'Tap the bag to draw';
-    } else {
-      callText = 'Shuffling the coins…';
-      _scheduleDraw(const Duration(milliseconds: 1800));
-    }
-    fx.keepAwake(true);
-    notifyListeners();
   }
 
-  List<Ticket> _deal() => List.generate(settings.tickets, (_) => makeTicket(rng));
+  List<Ticket> _deal() => createTickets(settings.tickets, fromRandom(rng));
 
   void openSetup() {
     _clearTimers();
-    paused = true;
     fx.hush();
+    if (stage == Stage.playing && !over) {
+      paused = true;
+      _saved = _SavedGame(_draw, players, Map.of(claimed));
+    }
     stage = Stage.setup;
     notifyListeners();
   }
 
   void _scheduleDraw(Duration d) {
     _drawTimer?.cancel();
-    if (over || paused || settings.manual) return;
+    if (over || paused || settings.manual || stage != Stage.playing) return;
     _drawTimer = Timer(d, drawNext);
   }
 
   Duration get _speed => Duration(milliseconds: settings.speed);
+
+  /// Changes the time between calls, including mid-game.
+  void setSpeed(int ms) {
+    final wasManual = settings.manual;
+    settings.speed = ms;
+    settings.save();
+    if (stage == Stage.playing && !over) {
+      if (settings.manual) {
+        _drawTimer?.cancel();
+        paused = false;
+        callText = 'Tap the bag to draw';
+      } else if (wasManual) {
+        paused = true;
+        callText = 'Press ▶ to start the caller';
+      } else {
+        _scheduleDraw(_speed);
+      }
+    }
+    notifyListeners();
+  }
 
   void drawNext() {
     if (over || stage != Stage.playing) return;
@@ -202,15 +338,13 @@ class GameController extends ChangeNotifier {
       if (!settings.manual) _scheduleDraw(const Duration(milliseconds: 300));
       return;
     }
-    if (_remaining.isEmpty) {
+    final n = _draw.next();
+    if (n == null) {
       _endGame();
       return;
     }
-
-    final n = _remaining.removeLast();
-    called.add(n);
-    calledSet.add(n);
-    _emit(BagShakeEvent());
+    _save();
+    emit(BagShakeEvent());
     fx.play(Sfx.rummage);
 
     _later(const Duration(milliseconds: 550), () {
@@ -221,8 +355,8 @@ class GameController extends ChangeNotifier {
       }
       currentCoin = n;
       _later(const Duration(milliseconds: 350), () => fx.play(Sfx.clack));
-      callText = calls[n];
-      fx.say(spoken(n));
+      callText = describeCall(n, settings.voice.style).display;
+      fx.say(settings.voice.speechFor(n));
 
       // Cells dabbed early are fine now their number has come up.
       wrong.removeWhere((w) => w.endsWith(':$n'));
@@ -239,6 +373,7 @@ class GameController extends ChangeNotifier {
     _scheduleDraw(_speed);
   }
 
+  @override
   void tapBag() {
     if (over || stage != Stage.playing) return;
     if (settings.manual) {
@@ -253,7 +388,7 @@ class GameController extends ChangeNotifier {
     paused = !paused;
     if (paused) {
       _drawTimer?.cancel();
-      callText = 'Paused — take a breather';
+      callText = 'Paused. Take a breather';
       fx.hush();
     } else {
       callText = 'Here we go…';
@@ -270,7 +405,7 @@ class GameController extends ChangeNotifier {
   void toggleSound() {
     settings.sound = !settings.sound;
     if (!settings.sound) fx.hush();
-    unawaited(settings.save());
+    settings.save();
     notifyListeners();
   }
 
@@ -285,16 +420,18 @@ class GameController extends ChangeNotifier {
     if (t.dabs.remove(n)) {
       dabLooks[t]?.remove(n);
       wrong.remove(key);
+      _save();
       notifyListeners();
       return;
     }
     _dab(t, n);
     fx.play(Sfx.dab);
     fx.buzz(Buzz.dab);
-    if (!calledSet.contains(n)) {
+    if (!isCalled(n)) {
       wrong.add(key);
-      toast("$n hasn't been called yet — tap again to undo");
+      toast("$n hasn't been called yet. Tap again to undo");
     }
+    _save();
     notifyListeners();
   }
 
@@ -313,21 +450,21 @@ class GameController extends ChangeNotifier {
         notifyListeners();
       });
     }
+    _save();
   }
 
   // ---------- Computer players ----------
 
   void _botsConsider() {
-    bool has(int n) => calledSet.contains(n);
     for (final bot in players.skip(1)) {
       for (final p in prizes) {
         if (claimed.containsKey(p.key)) continue;
         final key = '${bot.id}:${p.key}';
         if (_pending.contains(key)) continue;
-        if (!bot.tickets.any((t) => meets(p.key, t, has))) continue;
-        if (rng.nextDouble() > bot.skill) continue; // didn't notice this time — may spot it next call
+        if (!bot.tickets.any((t) => meets(p.key, t, isCalled))) continue;
+        if (rng.nextDouble() > bot.skill) continue; // didn't notice this time; may spot it next call
         _pending.add(key);
-        final base = settings.speed == 0 ? 4500 : settings.speed;
+        final base = settings.manual ? 4500 : settings.speed;
         final ms = base * 0.3 + rng.nextDouble() * base * 0.55 + 800;
         _later(Duration(milliseconds: ms.round()), () {
           _pending.remove(key);
@@ -346,18 +483,18 @@ class GameController extends ChangeNotifier {
       toast('Already claimed by ${owner.name}');
       return;
     }
-    final winning = me.tickets.indexWhere((t) => meets(key, t, (n) => calledSet.contains(n) && t.dabs.contains(n)));
+    final winning = me.tickets.indexWhere((t) => meets(key, t, (n) => isCalled(n) && t.dabs.contains(n)));
     if (winning >= 0) {
       _award(me, key, ticketIndex: winning);
       return;
     }
-    if (me.tickets.any((t) => meets(key, t, calledSet.contains))) {
+    if (me.tickets.any((t) => meets(key, t, isCalled))) {
       toast('So close! Dab all the numbers for that prize first.');
       return;
     }
     fx.play(Sfx.bogey);
     fx.say('Bogey!');
-    _emit(AnnounceEvent('Bogey!', 'Not quite — keep playing', bogey: true));
+    emit(AnnounceEvent('Bogey!', 'Not quite. Keep playing', bogey: true));
   }
 
   void _award(Player player, String key, {int? ticketIndex}) {
@@ -381,11 +518,11 @@ class GameController extends ChangeNotifier {
         winnerTicket = null;
         notifyListeners();
       });
-      _emit(AnnounceEvent(prize.label, 'You win ${prize.points} points!'));
+      emit(AnnounceEvent(prize.label, 'You win ${prize.points} points!'));
       fx.say('${prize.label}! Well done ${player.name}!');
     } else {
       fx.play(Sfx.lose);
-      _emit(AnnounceEvent(prize.label, '${player.name} claims it — checked ✓'));
+      emit(AnnounceEvent(prize.label, '${player.name} claims it, checked ✓'));
       fx.say('${prize.label} to ${player.name}!');
     }
 
@@ -396,12 +533,14 @@ class GameController extends ChangeNotifier {
     } else {
       _scheduleDraw(Duration(milliseconds: max(settings.speed, 3200)));
     }
+    _save();
     notifyListeners();
   }
 
   void _endGame() {
     _clearTimers();
     over = true;
+    _save();
     fx.keepAwake(false);
     stage = Stage.results;
     notifyListeners();
@@ -413,7 +552,14 @@ class GameController extends ChangeNotifier {
   void dispose() {
     _clearTimers();
     fx.keepAwake(false);
-    _events.close();
+    closeEvents();
     super.dispose();
   }
+}
+
+class _SavedGame {
+  _SavedGame(this.draw, this.players, this.claimed);
+  final NumberDraw draw;
+  final List<Player> players;
+  final Map<String, Player> claimed;
 }

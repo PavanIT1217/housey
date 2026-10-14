@@ -4,7 +4,20 @@ A Housey (Tambola / Housie) game for the browser that tries to look and feel lik
 
 ## Play
 
-Open `index.html` in any modern browser (phone or desktop). No install or build step is needed.
+Play at [housey.webappslab.com](https://housey.webappslab.com/). There's no build step: the site is plain HTML, CSS and JavaScript modules. To run it locally, serve the folder (browsers don't load JavaScript modules from `file://`):
+
+```bash
+npm start                      # or: python3 -m http.server 8080
+```
+
+### What's on the site
+
+- **The game** (`index.html`): play against friendly computer players. Choose the caller's speed and voice, and pick up where you left off if the page is refreshed or closed.
+- **Number caller** (`caller.html`): draws and reads out numbers for your own game on paper tickets. Auto or tap-to-call, undo, full screen for a TV, and a ticket checker for prize claims.
+- **Print tickets** (`print.html`): as many tickets as you need (up to 600), in your colours and layout, or from a preset. Print or save as PDF, and download a list of the codes.
+- **My tickets** (`ticket.html`): open a printed ticket on a phone by scanning its QR code or typing its code, and dab it on screen.
+
+Every ticket has a code like `HNZV-C92Z`. The code *is* the ticket: the numbers are generated from it, so any device can rebuild and check a ticket without a server. A check letter catches typos.
 
 ### Offline and installing
 
@@ -22,9 +35,18 @@ Updates download in the background and show up the next time you open the game.
 
 Space bar pauses or resumes (or draws the next coin in tap mode).
 
+## Develop
+
+```bash
+npm install
+npm run check      # lint + tests (the Web app workflow runs the same on every push)
+```
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is organised and the plan for online play.
+
 ## Mobile app
 
-`mobile/` holds a native Flutter version of the game for Android and iOS. See [mobile/README.md](mobile/README.md) to run or build it.
+`mobile/` holds a native Flutter version for Android and iOS with the same features: the game, the number caller, my tickets (with a QR scanner) and printable tickets as a PDF. Ticket codes work across both: a ticket printed from the app opens on the website, and the other way round. See [mobile/README.md](mobile/README.md) to run or build it.
 
 ## Files
 
@@ -34,10 +56,10 @@ Space bar pauses or resumes (or draws the next coin in tap mode).
 - `sw.js`, `manifest.webmanifest`, `icons/`: offline support and the installable app
 - `fonts/`: local copies of the fonts (from Google Fonts, SIL Open Font License) so text looks right offline
 - `how-to-play.html`, `tambola-calls.html`: the Tambola rules and the list of all 90 traditional calls
-- `privacy.html`, `terms.html`, `support.html`, `legal.css`: information pages
+- `privacy.html`, `terms.html`, `support.html`: information pages
 - `robots.txt`, `sitemap.xml`, `404.html`, `og-image.jpg`, `screenshots/`: search engines, link previews and install screens
 - `mobile/`: the Flutter app for Android and iOS
 
 ## Search engines
 
-Each page has its own title, description and canonical URL, plus Open Graph tags so shared links show a preview card. The home page carries schema.org structured data (the game, the website and an FAQ), and the sitemap lists every page. If you add a page, add it to `sitemap.xml` and to the `FILES` list in `sw.js`.
+Each page has its own title, description and canonical URL, plus Open Graph tags so shared links show a preview card. The home page carries schema.org structured data (the game, the website and an FAQ), and the sitemap lists every page. If you add a page, add it to `sitemap.xml`. Add every new page, script or stylesheet to the `FILES` list in `sw.js` and bump its `VERSION` (a test fails if you forget).

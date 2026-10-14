@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#3b2414">
+  <title>Tambola Number Caller: Free Housie Number Generator · Housey</title>
+  <meta name="description" content="A free Tambola (Housie) number caller for games on paper tickets. Draws numbers 1 to 90, reads them out loud, shows the board and checks tickets by code or QR.">
+  <link rel="canonical" href="https://housey.webappslab.com/caller.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Housey">
+  <meta property="og:url" content="https://housey.webappslab.com/caller.html">
+  <meta property="og:title" content="Tambola Number Caller · Housey">
+  <meta property="og:description" content="Draw and call Tambola numbers out loud for your own game on paper tickets. Free, no sign-up, works offline.">
+  <meta property="og:image" content="https://housey.webappslab.com/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="A Housey ticket dabbed with pink ink beside a wooden number coin on a wooden table">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:title" content="Tambola Number Caller · Housey">
+  <meta name="twitter:description" content="Draw and call Tambola numbers out loud for your own game on paper tickets. Free, no sign-up, works offline.">
+  <meta name="twitter:image" content="https://housey.webappslab.com/og-image.jpg">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://housey.webappslab.com/caller.html#app",
+        "name": "Housey Tambola Number Caller",
+        "url": "https://housey.webappslab.com/caller.html",
+        "description": "A free Tambola (Housie) number caller for games played on paper tickets. It draws numbers 1 to 90 at random, reads them out loud and shows the caller's board.",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Any (web browser)",
+        "browserRequirements": "Requires JavaScript",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        },
+        "featureList": [
+          "Draws numbers 1 to 90 fairly, one at a time",
+          "Reads each number out loud, with a choice of voice, speaking speed and call style",
+          "Automatic calling at the speed you choose, or one number per tap",
+          "Undo the last number",
+          "Check any ticket by its code or QR code",
+          "The game is saved, so refreshing the page does not lose it",
+          "Full screen for a TV or projector",
+          "Works offline"
+        ],
+        "image": "https://housey.webappslab.com/og-image.jpg",
+        "inLanguage": "en",
+        "publisher": {
+          "@id": "https://housey.webappslab.com/#org"
+        },
+        "isPartOf": {
+          "@id": "https://housey.webappslab.com/#website"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Housey",
+            "item": "https://housey.webappslab.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Number caller",
+            "item": "https://housey.webappslab.com/caller.html"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://housey.webappslab.com/caller.html#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Do I need Housey tickets to use the number caller?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The caller works with any Tambola or Housie tickets. Housey tickets add a code and QR code, so you can check a winning ticket in a second."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I change how fast numbers are called?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Pick Relaxed, Normal or Quick, or set any time from 2 to 20 seconds between numbers. You can also tap for each number yourself."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does the caller say the traditional Tambola calls?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Only if you want it to. By default it just says the number. Switch to Traditional to hear calls like \"Two little ducks, 22\"."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What happens if I refresh the page?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Nothing is lost. The numbers called so far are saved in your browser, so you can carry on where you left off."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link rel="preload" href="fonts/roboto-slab.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/alfa-slab-one.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/tools.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+</head>
+<body class="tool-page">
+  <header class="topbar">
+    <a class="logo" href="./">Housey <span class="tagline">Number caller</span></a>
+    <div class="top-actions">
+      <button class="icon-btn" id="soundBtn" title="Sound on / off" aria-label="Sound">🔊</button>
+      <button class="icon-btn" id="fullscreenBtn" title="Full screen (for a TV or projector)" aria-label="Full screen">⛶</button>
+    </div>
+  </header>
+
+  <main class="tool-layout">
+    <section class="caller" aria-live="polite">
+      <button class="bag" id="bag" aria-label="Draw the next number">
+        <svg viewBox="0 0 120 140" class="bag-svg" aria-hidden="true">
+          <defs>
+            <radialGradient id="sackFill" cx="40%" cy="45%" r="70%">
+              <stop offset="0" stop-color="#c9a46c"/><stop offset=".65" stop-color="#9c7543"/><stop offset="1" stop-color="#5e4223"/>
+            </radialGradient>
+          </defs>
+          <path d="M38 30 C30 40 10 62 12 96 C14 126 38 136 60 136 C82 136 106 126 108 96 C110 62 90 40 82 30 Z" fill="url(#sackFill)"/>
+          <path d="M44 46 Q40 80 34 118 M60 44 Q61 90 60 128 M76 46 Q80 80 86 118" stroke="#3d2a14" stroke-opacity=".22" stroke-width="2" fill="none"/>
+          <ellipse cx="60" cy="27" rx="25" ry="8" fill="#6d4e2b"/>
+          <ellipse cx="60" cy="25" rx="21" ry="5" fill="#2b1c0d"/>
+          <path d="M34 30 Q60 38 86 30" stroke="#d8c9a3" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="current">
+        <div class="coin-slot" id="coinSlot"><div class="coin-placeholder">?</div></div>
+      </div>
+      <div class="call-info">
+        <div class="call-text" id="callText">Press Start when everyone is ready</div>
+        <div class="call-count" id="callCount">0 / 90 called</div>
+        <div class="tray" id="tray" aria-label="Recently called"></div>
+      </div>
+    </section>
+
+    <div class="caller-controls">
+      <button class="big-btn" id="playBtn">▶ Start calling</button>
+      <button class="ctrl-btn" id="nextBtn" title="Draw one number now (N)">Next number</button>
+      <button class="ctrl-btn" id="undoBtn" title="Put the last number back (U)">↶ Undo</button>
+      <button class="ctrl-btn" id="resetBtn">New game</button>
+    </div>
+
+    <div class="tool-columns">
+      <section class="board-box board-static" aria-labelledby="boardTitle">
+        <h2 id="boardTitle" class="box-title">Caller's board</h2>
+        <div class="board" id="board"></div>
+      </section>
+
+      <div class="tool-side">
+        <section class="panel" aria-labelledby="checkTitle">
+          <h2 id="checkTitle">Check a ticket</h2>
+          <p class="note">Someone shouting a prize? Type the code from their ticket or scan its QR code to see what's been called.</p>
+          <div id="lookup"></div>
+          <div id="checkResult" class="check-result"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="speedTitle">
+          <h2 id="speedTitle">Speed and voice</h2>
+          <div class="field">
+            <span>Time between numbers</span>
+            <div id="speedControl"></div>
+          </div>
+          <div id="voiceSettings"></div>
+        </section>
+      </div>
+    </div>
+
+    <article class="sheet tool-about">
+      <h1>A Tambola number caller for your own game</h1>
+      <p>Play Housey with real paper tickets: <a href="print.html">print tickets</a>, hand them out, and let this page draw the numbers and read them out. It works on a phone, or on a laptop plugged into a TV for a big room.</p>
+      <ul>
+        <li>Press <b>Start calling</b> and numbers come out on their own at the speed you set. Pause any time.</li>
+        <li>Prefer to go at your own pace? Tap the bag or <b>Next number</b> for each call.</li>
+        <li>Called a number by mistake? <b>Undo</b> puts it back in the bag.</li>
+        <li>The game is saved as you go, so refreshing the page or closing the browser doesn't lose it.</li>
+      </ul>
+      <p>Keyboard: <b>Space</b> starts or pauses, <b>N</b> draws the next number, <b>U</b> undoes.</p>
+
+      <h2>Questions</h2>
+      <details><summary>Do I need Housey tickets to use the number caller?</summary><p>No. The caller works with any Tambola or Housie tickets. Housey tickets add a code and QR code, so you can check a winning ticket in a second.</p></details>
+      <details><summary>Can I change how fast numbers are called?</summary><p>Yes. Pick Relaxed, Normal or Quick, or set any time from 2 to 20 seconds between numbers. You can also tap for each number yourself.</p></details>
+      <details><summary>Does the caller say the traditional Tambola calls?</summary><p>Only if you want it to. By default it just says the number. Switch to Traditional to hear calls like "Two little ducks, 22".</p></details>
+      <details><summary>What happens if I refresh the page?</summary><p>Nothing is lost. The numbers called so far are saved in your browser, so you can carry on where you left off.</p></details>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <nav aria-label="More about Housey">
+      <a href="./">Play Housey</a>
+      <a href="print.html">Print tickets</a>
+      <a href="ticket.html">Open a ticket</a>
+      <a href="how-to-play.html">How to play</a>
+      <a href="support.html">Support</a>
+    </nav>
+    <p>© 2026 WebAppsLab</p>
+  </footer>
+
+  <script type="module" src="js/pages/caller.js"></script>
+</body>
+</html>

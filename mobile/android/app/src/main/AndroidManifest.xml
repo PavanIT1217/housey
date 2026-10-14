@@ -1,4 +1,10 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Housey never goes online (see privacy.html). The QR scanner's ML Kit library asks for
+         internet access to send usage logs to Google; take it away so nothing leaves the phone.
+         Its scanning model is bundled in the app and works offline. Debug builds keep internet
+         access for development tools. -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
     <application
         android:label="Housey"
         android:name="${applicationName}"

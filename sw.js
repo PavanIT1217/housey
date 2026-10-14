@@ -1,9 +1,18 @@
 // Bump VERSION when the file list changes; edits to cached files update on their own.
-const VERSION = 'housey-v3';
+const VERSION = 'housey-v4';
 const FILES = [
-  './', 'index.html', 'style.css', 'game.js', 'manifest.webmanifest',
+  './', 'index.html', 'caller.html', 'print.html', 'ticket.html', 'manifest.webmanifest',
+  'css/style.css', 'css/tools.css', 'css/print.css', 'css/legal.css',
+  'js/core/calls.js', 'js/core/number-draw.js', 'js/core/print-options.js', 'js/core/prizes.js',
+  'js/core/random.js', 'js/core/ticket-code.js', 'js/core/tickets.js',
+  'js/services/settings.js', 'js/services/sound.js', 'js/services/speech.js', 'js/services/storage.js',
+  'js/services/ticket-service.js',
+  'js/ui/board.js', 'js/ui/caller-display.js', 'js/ui/caller-settings.js', 'js/ui/dom.js', 'js/ui/qr.js',
+  'js/ui/ticket-lookup.js', 'js/ui/ticket-view.js',
+  'js/pages/caller.js', 'js/pages/game.js', 'js/pages/print.js', 'js/pages/ticket.js',
+  'js/vendor/qrcode.js', 'js/vendor/jsQR.js',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',
-  'privacy.html', 'terms.html', 'support.html', 'how-to-play.html', 'tambola-calls.html', 'legal.css',
+  'privacy.html', 'terms.html', 'support.html', 'how-to-play.html', 'tambola-calls.html',
   'fonts/alfa-slab-one.woff2', 'fonts/caveat-700.woff2', 'fonts/courier-prime-700.woff2', 'fonts/roboto-slab.woff2',
 ];
 
