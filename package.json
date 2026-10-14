@@ -1,0 +1,21 @@
+{
+  "name": "housey",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Housey (Tambola / Housie) for the browser: the game, a number caller, printable tickets and ticket codes.",
+  "type": "module",
+  "scripts": {
+    "start": "npx --yes serve@14.2.4 -l 8080 .",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "lint": "eslint .",
+    "check": "npm run lint && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

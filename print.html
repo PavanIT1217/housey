@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#3b2414">
+  <title>Printable Tambola Tickets: Free Housie Ticket Generator · Housey</title>
+  <meta name="description" content="Make and print free Tambola (Housie) tickets. Choose how many, the colours and the layout, or start from a preset. Every ticket has a code and QR code.">
+  <link rel="canonical" href="https://housey.webappslab.com/print.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Housey">
+  <meta property="og:url" content="https://housey.webappslab.com/print.html">
+  <meta property="og:title" content="Printable Tambola Tickets · Housey">
+  <meta property="og:description" content="Free Tambola ticket generator: pick a number of tickets and colours, then print or save as PDF.">
+  <meta property="og:image" content="https://housey.webappslab.com/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="fonts/roboto-slab.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/tools.css">
+  <link rel="stylesheet" href="css/print.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+</head>
+<body class="tool-page print-tool">
+  <header class="topbar">
+    <a class="logo" href="./">Housey <span class="tagline">Print tickets</span></a>
+  </header>
+
+  <main class="tool-layout">
+    <section class="panel print-controls" aria-labelledby="printTitle">
+      <h1 id="printTitle">Print Tambola tickets</h1>
+
+      <div class="field">
+        <span>Start from a preset</span>
+        <div class="presets" id="presets"></div>
+      </div>
+
+      <div class="print-form">
+        <label class="field">
+          <span>Number of tickets</span>
+          <input type="number" id="countInput" min="1" max="600" inputmode="numeric">
+        </label>
+        <div class="field">
+          <span>Tickets per page</span>
+          <div class="seg" id="layoutSeg"></div>
+        </div>
+        <div class="field">
+          <span>Colour</span>
+          <div class="swatches" id="swatches">
+            <label class="swatch custom" title="Pick your own colour" data-theme="custom">
+              <input type="color" id="customColor" aria-label="Pick your own colour">
+            </label>
+          </div>
+        </div>
+        <label class="field">
+          <span>Title on each ticket</span>
+          <input type="text" id="titleInput" maxlength="40">
+        </label>
+        <label class="field">
+          <span>Footer line (optional)</span>
+          <input type="text" id="footerInput" maxlength="60" placeholder="e.g. ₹20 a ticket · Sunday 7 pm">
+        </label>
+        <label class="field">
+          <span>First ticket number</span>
+          <input type="number" id="startInput" min="1" inputmode="numeric">
+        </label>
+        <div class="field toggles">
+          <label class="toggle"><input type="checkbox" id="qrInput"><span>QR code and ticket code</span></label>
+        </div>
+      </div>
+
+      <div class="print-actions">
+        <button class="big-btn" id="printBtn">🖨 Print or save as PDF</button>
+        <button class="ctrl-btn" id="generateBtn">Make new tickets</button>
+        <button class="ctrl-btn" id="csvBtn">Download code list</button>
+      </div>
+      <p class="note" id="printSummary"></p>
+      <p class="note">Every ticket is different. Players can scan the QR code to play the ticket on their phone, and the <a href="caller.html">number caller</a> can check any ticket by its code.</p>
+    </section>
+
+    <div class="preview-wrap">
+      <div class="print-preview" id="preview"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav aria-label="More about Housey">
+      <a href="./">Play Housey</a>
+      <a href="caller.html">Number caller</a>
+      <a href="ticket.html">Open a ticket</a>
+      <a href="how-to-play.html">How to play</a>
+      <a href="support.html">Support</a>
+    </nav>
+    <p>© 2026 WebAppsLab</p>
+  </footer>
+
+  <script type="module" src="js/pages/print.js"></script>
+</body>
+</html>

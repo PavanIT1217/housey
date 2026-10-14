@@ -35,7 +35,8 @@ void main() {
 
   test('every number has a call', () {
     expect(calls, hasLength(91));
-    expect(spoken(7), 'Lucky seven. Number 7.');
-    expect(spoken(22), 'Two little ducks. two and two, 22.');
+    expect(spoken(7), 'Number 7.');
+    expect(spoken(22), 'Number 22.');
+    expect(traditionalCall(22), 'Two little ducks. two and two, 22.');
   });
 }

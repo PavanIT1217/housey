@@ -221,7 +221,7 @@ class GameController extends ChangeNotifier {
       }
       currentCoin = n;
       _later(const Duration(milliseconds: 350), () => fx.play(Sfx.clack));
-      callText = calls[n];
+      callText = 'Number $n';
       fx.say(spoken(n));
 
       // Cells dabbed early are fine now their number has come up.

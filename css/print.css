@@ -1,0 +1,85 @@
+/* Printable ticket sheets: A4 pages, shown as a preview on screen and printed as is. */
+
+.print-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 18px; }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; }
+.preset {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
+  padding: 8px 12px; border: 2px solid var(--ink-print); border-radius: 8px;
+  background: rgba(255, 255, 255, .5); color: var(--ink-print); text-align: left;
+}
+.preset small { font-size: 12px; opacity: .7; }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+.swatch {
+  position: relative; width: 34px; height: 34px; border-radius: 50%; padding: 0;
+  border: 3px solid var(--paper); box-shadow: 0 0 0 2px rgba(30, 42, 74, .35); cursor: pointer;
+}
+.swatch.on { box-shadow: 0 0 0 3px var(--ink-print); }
+.swatch.custom::after { content: "+"; position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-weight: 800; pointer-events: none; }
+.swatch.custom input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+.print-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.print-actions .big-btn { width: auto; flex: 1 1 260px; margin: 0; }
+
+.preview-wrap { overflow: hidden; }
+.print-preview { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+
+/* ---------- One A4 page ---------- */
+.print-page {
+  width: 210mm; height: 297mm; padding: 10mm; overflow: hidden;
+  background: #fff; color: #111;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+  display: grid; gap: 6mm; align-content: start;
+  font-family: "Roboto Slab", Georgia, serif;
+}
+.print-page.layout-large { grid-template-columns: 1fr; gap: 9mm; }
+.print-page.layout-standard { grid-template-columns: 1fr; gap: 5mm; }
+.print-page.layout-compact { grid-template-columns: 1fr 1fr; gap: 5mm 6mm; }
+
+/* ---------- Printed ticket ---------- */
+.pt {
+  --c: #b3261e;
+  border: .6mm solid var(--c); border-radius: 2mm; padding: 2mm 2.5mm 2.5mm;
+  break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.pt-head { display: flex; justify-content: space-between; align-items: baseline; gap: 2mm; margin-bottom: 1.5mm; }
+.pt-title { font-family: "Alfa Slab One", serif; color: var(--c); font-size: 4.2mm; letter-spacing: .3mm; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pt-no { font-size: 3mm; font-weight: 700; text-transform: uppercase; letter-spacing: .3mm; white-space: nowrap; }
+.pt-body { display: flex; gap: 2.5mm; align-items: stretch; }
+.pt-grid {
+  flex: 1; display: grid; grid-template-columns: repeat(9, 1fr);
+  border: .5mm solid var(--c); background: var(--c); gap: .3mm;
+}
+.pt-cell {
+  aspect-ratio: 1 / .92; display: grid; place-items: center; background: #fff;
+  font-weight: 800; font-size: 6.5mm; color: #111;
+}
+.pt-cell.empty { background: color-mix(in srgb, var(--c) 16%, #fff); }
+.pt-qr { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .8mm; width: 24mm; }
+.pt-qr svg { width: 22mm; height: 22mm; display: block; }
+.pt-code { font-family: "Courier Prime", monospace; font-weight: 700; font-size: 3mm; letter-spacing: .2mm; white-space: nowrap; }
+.pt-foot { margin-top: 1.5mm; text-align: center; font-size: 2.8mm; color: #333; }
+
+.layout-large .pt { padding: 3mm 3.5mm 3.5mm; }
+.layout-large .pt-title { font-size: 5.5mm; }
+.layout-large .pt-no { font-size: 3.6mm; }
+.layout-large .pt-cell { font-size: 8.5mm; aspect-ratio: 1 / 1; }
+.layout-large .pt-qr { width: 30mm; }
+.layout-large .pt-qr svg { width: 28mm; height: 28mm; }
+.layout-standard .pt-cell { aspect-ratio: 1 / .8; }
+.layout-compact .pt { padding: 1.5mm 2mm 2mm; }
+.layout-compact .pt-title { font-size: 3.2mm; }
+.layout-compact .pt-no { font-size: 2.4mm; }
+.layout-compact .pt-cell { font-size: 3.8mm; aspect-ratio: 1 / 1.05; }
+.layout-compact .pt-qr { width: 15mm; }
+.layout-compact .pt-qr svg { width: 14mm; height: 14mm; }
+.layout-compact .pt-code { font-size: 2.2mm; }
+.layout-compact .pt-foot { font-size: 2.2mm; }
+
+@page { size: A4 portrait; margin: 0; }
+@media print {
+  body.print-tool { background: #fff !important; padding: 0; }
+  .print-tool .topbar, .print-tool .print-controls, .print-tool .site-footer { display: none !important; }
+  .print-tool .tool-layout { padding: 0; max-width: none; gap: 0; }
+  .print-preview { zoom: 1 !important; gap: 0; }
+  .print-page { box-shadow: none; break-after: page; height: 296mm; }
+  .print-page:last-child { break-after: auto; }
+}

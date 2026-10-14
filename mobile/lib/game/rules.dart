@@ -97,8 +97,11 @@ const calls = <String>[
 
 const _digits = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 
-/// What the caller says for [n], e.g. "Two little ducks. two and two, 22."
-String spoken(int n) =>
+/// What the caller says for [n]: just the number, e.g. "Number 22."
+String spoken(int n) => 'Number $n.';
+
+/// The traditional call for [n] with its digits, e.g. "Two little ducks. two and two, 22."
+String traditionalCall(int n) =>
     n < 10 ? '${calls[n]}. Number $n.' : '${calls[n]}. ${_digits[n ~/ 10]} and ${_digits[n % 10]}, $n.';
 
 class Prize {

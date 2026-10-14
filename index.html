@@ -28,7 +28,7 @@
 
   <link rel="preload" href="fonts/roboto-slab.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/alfa-slab-one.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
@@ -95,19 +95,12 @@
   </script>
 </head>
 <body>
-  <!-- Ink filters give each dab a rough, hand-stamped edge -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <filter id="ink0"><feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="2" seed="1"/><feDisplacementMap in="SourceGraphic" scale="7"/></filter>
-    <filter id="ink1"><feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="8"/></filter>
-    <filter id="ink2"><feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="2" seed="13"/><feDisplacementMap in="SourceGraphic" scale="6"/></filter>
-    <filter id="ink3"><feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="2" seed="29"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
-  </svg>
-
   <header class="topbar">
     <h1 class="logo">Housey <span class="tagline">Tambola · Housie</span></h1>
     <div class="top-actions">
       <button class="icon-btn" id="pauseBtn" title="Pause / resume calling" aria-label="Pause">⏸</button>
       <button class="icon-btn" id="soundBtn" title="Sound on / off" aria-label="Sound">🔊</button>
+      <button class="icon-btn" id="callerSettingsBtn" title="Caller speed and voice" aria-label="Caller speed and voice">⚙</button>
       <button class="icon-btn" id="newBtn" title="New game" aria-label="New game">↻</button>
     </div>
   </header>
@@ -178,6 +171,8 @@
         <div><h3>Feels real</h3><p>Paper tickets, an ink dauber, wooden coins and a printed caller's board with red chips.</p></div>
         <div><h3>Simple to play</h3><p>Pick your tickets and speed, then tap numbers as they're called. Auto-dab is there if you want it.</p></div>
         <div><h3>Works offline</h3><p>Open it once and it saves itself on your device. Install it on your home screen like an app.</p></div>
+        <div><h3>Number caller</h3><p>Playing with paper tickets? <a href="caller.html">The number caller</a> draws and reads out numbers for your own game.</p></div>
+        <div><h3>Printable tickets</h3><p><a href="print.html">Print as many tickets as you need</a> in your colours, each with a code and QR code.</p></div>
         <div><h3>Free for everyone</h3><p>No sign-up, no ads and no real money. Prizes are points, just for fun.</p></div>
       </div>
 
@@ -215,6 +210,9 @@
   <footer class="site-footer">
     <nav aria-label="More about Housey">
       <a href="how-to-play.html">How to play</a>
+      <a href="caller.html">Number caller</a>
+      <a href="print.html">Print tickets</a>
+      <a href="ticket.html">Open a ticket</a>
       <a href="tambola-calls.html">Number calls</a>
       <a href="support.html">Support</a>
       <a href="privacy.html">Privacy</a>
@@ -245,13 +243,18 @@
       </div>
       <div class="field">
         <span>Calling speed</span>
-        <div class="seg" data-name="speed">
-          <button data-v="8000">Relaxed</button><button data-v="5500">Normal</button><button data-v="3500">Quick</button><button data-v="0">I'll tap</button>
-        </div>
+        <div id="speedControl"></div>
       </div>
       <div class="field toggles">
-        <label class="toggle"><input type="checkbox" id="voiceInput" checked><span>Caller's voice</span></label>
         <label class="toggle"><input type="checkbox" id="autoInput"><span>Auto‑dab for me</span></label>
+      </div>
+      <details class="rules voice-box">
+        <summary>Caller's voice</summary>
+        <div id="setupVoice"></div>
+      </details>
+      <div class="resume hidden" id="resumeBox">
+        <p id="resumeText">You have a game in progress.</p>
+        <button class="big-btn" id="resumeBtn">Resume game</button>
       </div>
       <button class="big-btn" id="startBtn">Deal tickets</button>
       <details class="rules">
@@ -264,7 +267,25 @@
           <li>The game ends when someone wins Full House.</li>
         </ul>
       </details>
+      <nav class="tool-links" aria-label="More ways to play">
+        <a href="caller.html">🎙 Number caller</a>
+        <a href="print.html">🖨 Print tickets</a>
+        <a href="ticket.html">🎟 Open a ticket</a>
+      </nav>
       <p class="legal-links"><a href="support.html">Support</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></p>
+    </div>
+  </div>
+
+  <!-- Caller speed and voice, changeable mid-game -->
+  <div class="modal hidden" id="callerSettings" role="dialog" aria-modal="true" aria-labelledby="callerSettingsTitle">
+    <div class="card">
+      <h2 id="callerSettingsTitle" class="card-title">The caller</h2>
+      <div class="field">
+        <span>Calling speed</span>
+        <div id="gameSpeedControl"></div>
+      </div>
+      <div id="gameVoice"></div>
+      <button class="big-btn" id="callerSettingsClose">Done</button>
     </div>
   </div>
 
@@ -283,6 +304,6 @@
   <div class="announce" id="announce" aria-live="assertive"></div>
   <div class="toast" id="toast" role="status"></div>
 
-  <script src="game.js"></script>
+  <script type="module" src="js/pages/game.js"></script>
 </body>
 </html>
