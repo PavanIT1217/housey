@@ -3,8 +3,9 @@ import 'dart:math';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:housey/game/controller.dart';
-import 'package:housey/game/rules.dart';
-import 'package:housey/game/settings.dart';
+import 'package:housey/core/prizes.dart';
+import 'package:housey/services/settings.dart';
+import 'package:housey/services/storage.dart';
 
 GameController newGame({int bots = 0, int speed = 3500, bool auto = false}) {
   final s = Settings()
@@ -63,7 +64,7 @@ void main() {
 
       // Draw until the top row of ticket 1 is complete.
       final ticket = g.me.tickets.first;
-      while (!ticket.row(0).every(g.calledSet.contains)) {
+      while (!ticket.row(0).every(g.isCalled)) {
         g.tapBag();
         async.elapse(const Duration(seconds: 1));
       }
@@ -99,10 +100,68 @@ void main() {
       async.elapse(const Duration(minutes: 15));
       expect(g.stage, Stage.results);
       expect(g.claimed.keys, containsAll(prizes.map((p) => p.key)));
-      final mine = g.me.tickets.expand((t) => t.numbers).where(g.calledSet.contains);
+      final mine = g.me.tickets.expand((t) => t.numbers).where(g.isCalled);
       expect(g.me.tickets.expand((t) => t.dabs), containsAll(mine));
       final total = g.players.fold<int>(0, (sum, p) => sum + p.points);
       expect(total, prizes.fold<int>(0, (sum, p) => sum + p.points));
+    });
+  });
+
+  test('a game is saved as it goes and can be resumed after a restart', () {
+    fakeAsync((async) {
+      final store = MemoryStore();
+      final slot = JsonRecord(store, StoreKeys.savedGame, 1);
+      final s = Settings()..speed = 0;
+      final g = GameController(settings: s, random: Random(3), saveSlot: slot)..newGame();
+      for (var i = 0; i < 8; i++) {
+        g.tapBag();
+        async.elapse(const Duration(seconds: 1));
+      }
+      final n = g.me.tickets.first.numbers.first;
+      g.toggleDab(0, n);
+      final called = List.of(g.called);
+      final codes = g.me.tickets.map((t) => t.code).toList();
+
+      // A fresh controller is what the app makes after being closed.
+      final again = GameController(settings: s, random: Random(4), saveSlot: slot);
+      expect(again.resumableCount, 8);
+      again.resume();
+      expect(again.stage, Stage.playing);
+      expect(again.called, called);
+      expect(again.me.tickets.map((t) => t.code), codes);
+      expect(again.me.tickets.first.dabs, contains(n));
+      expect(again.currentCoin, called.last);
+      again.tapBag();
+      async.elapse(const Duration(seconds: 1));
+      expect(again.called, hasLength(9));
+    });
+  });
+
+  test('a finished game is not offered for resuming', () {
+    fakeAsync((async) {
+      final slot = JsonRecord(MemoryStore(), StoreKeys.savedGame, 1);
+      final s = Settings()..speed = 2000;
+      GameController(settings: s, random: Random(5), saveSlot: slot).newGame();
+      async.elapse(const Duration(minutes: 10));
+      expect(GameController(settings: s, saveSlot: slot).resumableCount, isNull);
+    });
+  });
+
+  test('the caller calls just the number by default, and the speed can change mid-game', () {
+    fakeAsync((async) {
+      final g = newGame(speed: 3500);
+      async.elapse(const Duration(seconds: 3));
+      expect(g.callText, 'Number ${g.currentCoin}');
+      g.setSpeed(20000);
+      final n = g.called.length;
+      async.elapse(const Duration(seconds: 15));
+      expect(g.called.length, n);
+      async.elapse(const Duration(seconds: 6));
+      expect(g.called.length, n + 1);
+      g.setSpeed(0);
+      async.elapse(const Duration(minutes: 1));
+      expect(g.called.length, n + 1);
+      expect(g.callText, 'Tap the bag to draw');
     });
   });
 }

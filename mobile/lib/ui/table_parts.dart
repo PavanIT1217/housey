@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../game/controller.dart';
-import '../game/rules.dart';
+import '../core/prizes.dart';
+import '../core/random.dart';
+import '../core/tickets.dart';
 import 'look.dart';
 
-/// One of my paper tickets, slightly askew on the table.
+/// One of my tickets in the game, slightly askew on the table.
 class TicketCard extends StatelessWidget {
   const TicketCard({super.key, required this.game, required this.index, required this.tilt});
   final GameController game;
@@ -16,7 +18,46 @@ class TicketCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ticket = game.me.tickets[index];
-    final winner = game.winnerTicket == index;
+    return PaperTicket(
+      ticket: ticket,
+      heading: 'TICKET ${index + 1} OF ${game.me.tickets.length}',
+      tilt: tilt,
+      winner: game.winnerTicket == index,
+      dabLook: (n) => game.dabLooks[ticket]?[n],
+      isWrong: (n) => game.wrong.contains('$index:$n'),
+      onTap: (n) => game.toggleDab(index, n),
+    );
+  }
+}
+
+/// A paper ticket. With [onTap] the numbers can be dabbed; without it the ticket is read-only.
+class PaperTicket extends StatelessWidget {
+  const PaperTicket({
+    super.key,
+    required this.ticket,
+    required this.heading,
+    required this.dabLook,
+    this.isWrong,
+    this.onTap,
+    this.tilt = 0,
+    this.winner = false,
+  });
+
+  final Ticket ticket;
+  final String heading;
+  final DabLook? Function(int n) dabLook;
+  final bool Function(int n)? isWrong;
+  final void Function(int n)? onTap;
+
+  /// Degrees.
+  final double tilt;
+  final bool winner;
+
+  /// A gentle tilt between -1.2° and 1.2° that stays the same for a ticket.
+  static double tiltFor(String code) => (hashString(code)[0] % 241 - 120) / 100;
+
+  @override
+  Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 640),
@@ -60,13 +101,13 @@ class TicketCard extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          'TICKET ${index + 1} OF ${game.me.tickets.length}',
+                          heading,
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 11, letterSpacing: 2, color: Palette.ink),
                         ),
                       ),
                       Text(
-                        'Nº ${ticket.serial}',
+                        'Nº ${ticket.code}',
                         style: const TextStyle(
                           fontFamily: Fonts.mono,
                           fontWeight: FontWeight.w700,
@@ -99,7 +140,12 @@ class TicketCard extends StatelessWidget {
                                     SizedBox(
                                       width: cell,
                                       height: cell * 1.05,
-                                      child: _Cell(game: game, ticketIndex: index, number: ticket.grid[r][col]),
+                                      child: _Cell(
+                                        number: ticket.grid[r][col],
+                                        look: dabLook(ticket.grid[r][col]),
+                                        wrong: isWrong?.call(ticket.grid[r][col]) ?? false,
+                                        onTap: onTap,
+                                      ),
                                     ),
                                   ],
                                 ],
@@ -120,10 +166,11 @@ class TicketCard extends StatelessWidget {
 }
 
 class _Cell extends StatelessWidget {
-  const _Cell({required this.game, required this.ticketIndex, required this.number});
-  final GameController game;
-  final int ticketIndex;
+  const _Cell({required this.number, required this.look, required this.wrong, required this.onTap});
   final int number;
+  final DabLook? look;
+  final bool wrong;
+  final void Function(int n)? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -133,17 +180,15 @@ class _Cell extends StatelessWidget {
         child: ColoredBox(color: Color(0xFFECE1C4), child: SizedBox.expand()),
       );
     }
-    final ticket = game.me.tickets[ticketIndex];
-    final look = game.dabLooks[ticket]?[number];
-    final wrong = game.wrong.contains('$ticketIndex:$number');
     final width = MediaQuery.sizeOf(context).width;
+    final tap = onTap;
     return Semantics(
-      button: true,
+      button: tap != null,
       label: 'Number $number${look != null ? ', dabbed' : ''}',
       child: Material(
         color: const Color(0xFFFAF4E2),
         child: InkWell(
-          onTap: () => game.toggleDab(ticketIndex, number),
+          onTap: tap == null ? null : () => tap(number),
           highlightColor: const Color(0xFFFFF3CF),
           splashColor: Colors.transparent,
           child: Stack(
@@ -159,7 +204,7 @@ class _Cell extends StatelessWidget {
                   ),
                 ),
               ),
-              if (look != null) InkDab(key: ValueKey('dab$number${wrong ? 'w' : ''}'), look: look, blink: wrong),
+              if (look != null) InkDab(key: ValueKey('dab$number${wrong ? 'w' : ''}'), look: look!, blink: wrong),
             ],
           ),
         ),
@@ -353,8 +398,9 @@ class _Stamp extends StatelessWidget {
 
 /// The printed caller's board with a red chip on each called number.
 class CallersBoard extends StatefulWidget {
-  const CallersBoard({super.key, required this.game, required this.initiallyOpen});
-  final GameController game;
+  const CallersBoard({super.key, required this.isCalled, required this.latest, required this.initiallyOpen});
+  final bool Function(int n) isCalled;
+  final int? latest;
   final bool initiallyOpen;
 
   @override
@@ -366,8 +412,7 @@ class _CallersBoardState extends State<CallersBoard> {
 
   @override
   Widget build(BuildContext context) {
-    final game = widget.game;
-    final latest = game.currentCoin;
+    final latest = widget.latest;
     return Transform.rotate(
       angle: .4 * pi / 180,
       child: Container(
@@ -417,7 +462,7 @@ class _CallersBoardState extends State<CallersBoard> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  for (var n = 1; n <= 90; n++) _BoardCell(n: n, called: game.onBoard(n), latest: n == latest),
+                  for (var n = 1; n <= 90; n++) _BoardCell(n: n, called: widget.isCalled(n), latest: n == latest),
                 ],
               ),
           ],

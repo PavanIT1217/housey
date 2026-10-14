@@ -4,13 +4,13 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-import '../game/controller.dart';
+import '../game/table_events.dart';
 import 'look.dart';
 
 /// The felt mat with the bag of coins, the coin just drawn and the caller's words.
 class CallerMat extends StatelessWidget {
   const CallerMat({super.key, required this.game, required this.compact});
-  final GameController game;
+  final CallerMatModel game;
   final bool compact;
 
   @override
@@ -43,7 +43,7 @@ class CallerMat extends StatelessWidget {
                 height: coinSize,
                 child: game.currentCoin == null
                     ? _Placeholder(size: coinSize)
-                    : _EmergingCoin(key: ValueKey(game.called.length), number: game.currentCoin!, size: coinSize),
+                    : _EmergingCoin(key: ValueKey(game.drawCount), number: game.currentCoin!, size: coinSize),
               ),
               SizedBox(width: compact ? 10 : 22),
               Expanded(
@@ -224,7 +224,7 @@ class _SlideIn extends StatelessWidget {
 /// drawing, wiggles now and then to invite a tap.
 class Bag extends StatefulWidget {
   const Bag({super.key, required this.game, required this.width, required this.height});
-  final GameController game;
+  final CallerMatModel game;
   final double width, height;
 
   @override
@@ -274,7 +274,7 @@ class _BagState extends State<Bag> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final manual = widget.game.settings.manual && widget.game.stage == Stage.playing && !widget.game.over;
+    final manual = widget.game.invitesTap;
     if (manual && !_invite.isAnimating) {
       _invite.repeat();
     } else if (!manual && _invite.isAnimating) {

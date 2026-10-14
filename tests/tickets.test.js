@@ -86,3 +86,11 @@ test('a batch of tickets has no repeated codes', () => {
   assert.equal(tickets.length, 300);
   assert.equal(new Set(tickets.map(t => t.code)).size, 300);
 });
+
+// The Flutter app checks the same file, so both apps make identical tickets from a code.
+test('codes match the shared fixtures', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const { tickets } = JSON.parse(await readFile(new URL('./fixtures/ticket-codes.json', import.meta.url), 'utf8'));
+  assert.ok(tickets.length >= 40);
+  for (const { code, grid } of tickets) assert.deepEqual(ticketFromCode(code).grid, grid, code);
+});

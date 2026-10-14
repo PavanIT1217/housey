@@ -3,15 +3,19 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
+import '../app_services.dart';
 import '../game/controller.dart';
+import 'caller_settings.dart';
 import 'caller.dart';
 import 'cards.dart';
 import 'look.dart';
 import 'table_parts.dart';
+import 'tools_menu.dart';
 
 class TableScreen extends StatefulWidget {
-  const TableScreen({super.key, required this.game});
+  const TableScreen({super.key, required this.game, required this.services});
   final GameController game;
+  final AppServices services;
 
   @override
   State<TableScreen> createState() => _TableScreenState();
@@ -75,11 +79,11 @@ class _TableScreenState extends State<TableScreen> with WidgetsBindingObserver {
             children: [
               Column(
                 children: [
-                  _TopBar(game: game),
+                  _TopBar(game: game, services: widget.services),
                   Expanded(child: _Layout(game: game)),
                 ],
               ),
-              if (game.stage != Stage.playing) _Modal(game: game),
+              if (game.stage != Stage.playing) _Modal(game: game, services: widget.services),
               if (_banner != null) _Banner(key: ValueKey(_bannerId), event: _banner!),
               _Toast(message: _toast),
             ],
@@ -91,12 +95,14 @@ class _TableScreenState extends State<TableScreen> with WidgetsBindingObserver {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.game});
+  const _TopBar({required this.game, required this.services});
   final GameController game;
+  final AppServices services;
 
   @override
   Widget build(BuildContext context) {
     final narrow = MediaQuery.sizeOf(context).width < 560;
+    final gap = narrow ? 5.0 : 8.0;
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -112,20 +118,27 @@ class _TopBar extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Row(
             children: [
-              Text(
-                'Housey',
-                style: TextStyle(
-                  fontFamily: Fonts.display,
-                  fontSize: narrow ? 23 : 28,
-                  letterSpacing: 1,
-                  color: Palette.brass,
-                  shadows: const [
-                    Shadow(color: Color(0xFF6B4A12), offset: Offset(0, 2)),
-                    Shadow(color: Color(0x99000000), blurRadius: 8, offset: Offset(0, 4)),
-                  ],
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      'Housey',
+                      style: TextStyle(
+                        fontFamily: Fonts.display,
+                        fontSize: narrow ? 23 : 28,
+                        letterSpacing: 1,
+                        color: Palette.brass,
+                        shadows: const [
+                          Shadow(color: Color(0xFF6B4A12), offset: Offset(0, 2)),
+                          Shadow(color: Color(0x99000000), blurRadius: 8, offset: Offset(0, 4)),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              const Spacer(),
               Visibility(
                 visible: !game.settings.manual,
                 maintainSize: true,
@@ -137,14 +150,35 @@ class _TopBar extends StatelessWidget {
                   onTap: game.togglePause,
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: gap),
               _RoundButton(
                 icon: game.settings.sound ? Icons.volume_up_rounded : Icons.volume_off_rounded,
                 tooltip: game.settings.sound ? 'Sound off' : 'Sound on',
                 onTap: game.toggleSound,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: gap),
+              _RoundButton(
+                icon: Icons.tune_rounded,
+                tooltip: 'Caller speed and voice',
+                onTap: () => showCallerSettings(
+                  context,
+                  settings: game.settings,
+                  fx: game.fx,
+                  speed: () => game.settings.speed,
+                  onSpeed: game.setSpeed,
+                ),
+              ),
+              SizedBox(width: gap),
               _RoundButton(icon: Icons.refresh_rounded, tooltip: 'New game', onTap: game.openSetup),
+              SizedBox(width: gap),
+              _RoundButton(
+                icon: Icons.apps_rounded,
+                tooltip: 'Number caller, my tickets, print tickets',
+                onTap: () {
+                  if (game.stage == Stage.playing) game.pauseIfRunning();
+                  showToolsMenu(context, services);
+                },
+              ),
             ],
           ),
         ),
@@ -204,7 +238,7 @@ class _Layout extends StatelessWidget {
             key: ValueKey(game.me.tickets[i]),
             game: game,
             index: i,
-            tilt: (int.parse(game.me.tickets[i].serial) % 241 - 120) / 100,
+            tilt: PaperTicket.tiltFor(game.me.tickets[i].code),
           ),
         ),
       ],
@@ -222,7 +256,11 @@ class _Layout extends StatelessWidget {
         ),
       ),
     ];
-    final side = [CallersBoard(game: game, initiallyOpen: wide), const SizedBox(height: 18), PlayersList(game: game)];
+    final side = [
+      CallersBoard(isCalled: game.onBoard, latest: game.currentCoin, initiallyOpen: wide),
+      const SizedBox(height: 18),
+      PlayersList(game: game),
+    ];
 
     final caller = Padding(
       padding: EdgeInsets.fromLTRB(16, wide ? 18 : 10, 16, 0),
@@ -275,8 +313,9 @@ class _Layout extends StatelessWidget {
 }
 
 class _Modal extends StatelessWidget {
-  const _Modal({required this.game});
+  const _Modal({required this.game, required this.services});
   final GameController game;
+  final AppServices services;
 
   @override
   Widget build(BuildContext context) {
@@ -291,7 +330,7 @@ class _Modal extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + insets),
               child: Center(
                 child: game.stage == Stage.setup
-                    ? SetupCard(key: const ValueKey('setup'), game: game)
+                    ? SetupCard(key: const ValueKey('setup'), game: game, services: services)
                     : ResultsCard(key: const ValueKey('results'), game: game),
               ),
             ),

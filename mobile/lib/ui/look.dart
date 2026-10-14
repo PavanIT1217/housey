@@ -31,6 +31,13 @@ abstract final class Fonts {
   static const mono = 'CourierPrime';
 }
 
+/// The app's Material theme: slab type, red accents on a dark table.
+ThemeData houseyTheme() => ThemeData(
+  fontFamily: Fonts.slab,
+  colorScheme: ColorScheme.fromSeed(seedColor: Palette.ticketRed, brightness: Brightness.dark),
+  textSelectionTheme: const TextSelectionThemeData(cursorColor: Palette.ticketRed),
+);
+
 const tableShadow = [
   BoxShadow(color: Color(0x73000000), blurRadius: 24, offset: Offset(0, 10)),
   BoxShadow(color: Color(0x59000000), blurRadius: 4, offset: Offset(0, 2)),

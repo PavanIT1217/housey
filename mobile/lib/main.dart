@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'app_services.dart';
 import 'game/controller.dart';
-import 'game/fx.dart';
-import 'game/settings.dart';
+import 'services/fx.dart';
+import 'services/settings.dart';
+import 'services/storage.dart';
 import 'ui/look.dart';
 import 'ui/table_screen.dart';
 
@@ -18,31 +20,31 @@ Future<void> main() async {
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
-  final settings = await Settings.load();
-  final fx = DeviceFx(soundOn: () => settings.sound, voiceOn: () => settings.voice);
+  final store = await PrefsStore.open();
+  final settings = Settings.load(store);
+  final fx = DeviceFx(settings);
   await fx.init();
+  final services = AppServices(store: store, settings: settings, fx: fx);
   runApp(
     HouseyApp(
-      game: GameController(settings: settings, fx: fx),
+      services: services,
+      game: GameController(settings: settings, fx: fx, saveSlot: services.savedGame),
     ),
   );
 }
 
 class HouseyApp extends StatelessWidget {
-  const HouseyApp({super.key, required this.game});
+  const HouseyApp({super.key, required this.game, required this.services});
   final GameController game;
+  final AppServices services;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Housey',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: Fonts.slab,
-        colorScheme: ColorScheme.fromSeed(seedColor: Palette.ticketRed, brightness: Brightness.dark),
-        textSelectionTheme: const TextSelectionThemeData(cursorColor: Palette.ticketRed),
-      ),
-      home: TableScreen(game: game),
+      theme: houseyTheme(),
+      home: TableScreen(game: game, services: services),
     );
   }
 }
